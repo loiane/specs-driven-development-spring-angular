@@ -23,6 +23,16 @@ Make failing frontend tests pass with minimal UI code, then refactor and simplif
 5. Refactor and simplify; re-run tests after each step.
 6. Append implementation log blocks and mark task done.
 
+## Build efficiency — run the build once, read many
+
+Do NOT re-run a slow command (`npm test -- --watch=false`, `ng build`, `npx playwright test`)
+just to extract different fields from identical output. Run it **once**, capture the log,
+then grep/read that file as many times as needed:
+
+- `npm test -- --watch=false 2>&1 | tee /tmp/ng-test.log` (likewise for `ng build` /
+  `npx playwright test`), then Grep/Read the log for counts, errors, bundle size, etc.
+- Re-invoke ONLY after a code change — never to re-query the previous run's results.
+
 ## Hard rules
 
 - No edits outside `files_in_scope`.

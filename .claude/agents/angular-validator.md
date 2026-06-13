@@ -22,6 +22,16 @@ Run frontend validation gates and merge results into the feature validation arti
 4. Regenerate `07a-traceability.md` to include frontend tests mapped to ACs.
 5. Emit PASS/FAIL with clear recovery actions.
 
+## Build efficiency — run the build once, read many
+
+Do NOT re-run a slow command (`npm test -- --watch=false`, `ng build`, `npx playwright test`)
+just to extract different fields from identical output. Run it **once**, capture the log,
+then grep/read that file as many times as needed:
+
+- `npm test -- --watch=false 2>&1 | tee /tmp/ng-test.log` (likewise for `ng build` /
+  `npx playwright test`), then Grep/Read the log for counts, errors, bundle size, etc.
+- Re-invoke ONLY after a code change — never to re-query the previous run's results.
+
 ## Hard rules
 
 - Never modify production or test code during validate.

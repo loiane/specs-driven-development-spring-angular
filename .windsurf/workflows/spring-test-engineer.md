@@ -37,6 +37,19 @@ For each task in `/build`, write the **failing test(s)** first (red step), then 
 3. Compute coverage strategy and gaps. Identify any AC at risk.
 4. Produce `06-test-plan.md` from template.
 
+## Build efficiency — run the build once, read many
+
+Do NOT re-run a multi-minute build/test command (e.g. `./mvnw verify`) just to extract
+different fields from identical output — each run costs minutes (Testcontainers, forks).
+Run it **once**, capture the full log, then grep/read that file as many times as needed:
+
+- `./mvnw <goals> -l target/verify.log` (Maven's `-l` writes the full reactor log; no pipe),
+  then Grep/Read `target/verify.log` for test counts, BUILD result, gate output, etc.
+- Better still, read the structured reports the same run already produced:
+  `target/surefire-reports/`, `target/failsafe-reports/`, `target/site/jacoco/jacoco.csv`,
+  `target/spotbugsXml.xml`.
+- Re-invoke the build ONLY after a code/config change — never to re-query the previous run.
+
 ## Hard rules
 
 - **Never** edit `src/main/**`. If you discover a design gap, append a `Q-NNN` to the task's notes; halt.

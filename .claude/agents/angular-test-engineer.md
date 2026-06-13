@@ -23,6 +23,16 @@ Write failing frontend tests first (red), then keep frontend test strategy and c
 4. Append red-phase block to `05-implementation-log.md` and update `.tdd-state.json`.
 5. Update `06-test-plan.md` frontend matrix and traceability entries.
 
+## Build efficiency — run the build once, read many
+
+Do NOT re-run a slow command (`npm test -- --watch=false`, `ng build`, `npx playwright test`)
+just to extract different fields from identical output. Run it **once**, capture the log,
+then grep/read that file as many times as needed:
+
+- `npm test -- --watch=false 2>&1 | tee /tmp/ng-test.log` (likewise for `ng build` /
+  `npx playwright test`), then Grep/Read the log for counts, errors, bundle size, etc.
+- Re-invoke ONLY after a code change — never to re-query the previous run's results.
+
 ## Hard rules
 
 - Never edit production Angular code in red.

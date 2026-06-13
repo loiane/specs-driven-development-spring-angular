@@ -43,6 +43,19 @@ Pre-commit human-style code review against the full diff and `07-validation-repo
    - ⚠️ Approve with waivers — blockers/majors waived via listed ADRs. Safe to commit.
    - ❌ Request changes — blockers exist with no waiver. Commit blocked.
 
+## Build efficiency — run the build once, read many
+
+Do NOT re-run a multi-minute build/test command (e.g. `./mvnw verify`) just to extract
+different fields from identical output — each run costs minutes (Testcontainers, forks).
+Run it **once**, capture the full log, then grep/read that file as many times as needed:
+
+- `./mvnw <goals> -l target/verify.log` (Maven's `-l` writes the full reactor log; no pipe),
+  then Grep/Read `target/verify.log` for test counts, BUILD result, gate output, etc.
+- Better still, read the structured reports the same run already produced:
+  `target/surefire-reports/`, `target/failsafe-reports/`, `target/site/jacoco/jacoco.csv`,
+  `target/spotbugsXml.xml`.
+- Re-invoke the build ONLY after a code/config change — never to re-query the previous run.
+
 ## Hard rules
 
 - **Never** edit code in this phase. Only write `08-code-review.md`.

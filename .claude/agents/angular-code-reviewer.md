@@ -21,6 +21,16 @@ Run a structured frontend review of changed Angular files and append findings to
 3. Classify findings as must-fix/should-fix/nit/praise with path + line + fix.
 4. Confirm each UI-facing AC is covered by at least one frontend test.
 
+## Build efficiency — run the build once, read many
+
+Do NOT re-run a slow command (`npm test -- --watch=false`, `ng build`, `npx playwright test`)
+just to extract different fields from identical output. Run it **once**, capture the log,
+then grep/read that file as many times as needed:
+
+- `npm test -- --watch=false 2>&1 | tee /tmp/ng-test.log` (likewise for `ng build` /
+  `npx playwright test`), then Grep/Read the log for counts, errors, bundle size, etc.
+- Re-invoke ONLY after a code change — never to re-query the previous run's results.
+
 ## Hard rules
 
 - Do not auto-apply fixes during review.
