@@ -41,6 +41,19 @@ Bootstrap an existing Spring codebase into the spec-driven workflow without bloc
 
 6. **Sanity-check.** Run `mvn verify` once. If it fails for reasons not captured in baselines, halt and ask the user; do not lower thresholds to mask the failure.
 
+## Build efficiency — run the build once, read many
+
+Do NOT re-run a multi-minute build/test command (e.g. `./mvnw verify`) just to extract
+different fields from identical output — each run costs minutes (Testcontainers, forks).
+Run it **once**, capture the full log, then grep/read that file as many times as needed:
+
+- `./mvnw <goals> -l target/verify.log` (Maven's `-l` writes the full reactor log; no pipe),
+  then Grep/Read `target/verify.log` for test counts, BUILD result, gate output, etc.
+- Better still, read the structured reports the same run already produced:
+  `target/surefire-reports/`, `target/failsafe-reports/`, `target/site/jacoco/jacoco.csv`,
+  `target/spotbugsXml.xml`.
+- Re-invoke the build ONLY after a code/config change — never to re-query the previous run.
+
 ## Hard rules
 
 - **Never** delete or `@Disable` an existing test to "make the build green for onboarding".
