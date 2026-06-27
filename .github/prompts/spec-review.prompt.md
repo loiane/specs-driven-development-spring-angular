@@ -19,7 +19,7 @@ Audit `01-spec.md` against the spec checklist and produce `02-spec-review.md` wi
 ## Reads
 - `.specs/<feature-id>/01-spec.md`
 - `.github/checklists/spec-review.md`
-- `.github/templates/02-spec-review.md`
+- `.github/templates/spec-review.template.md`
 
 ## Writes
 - `.specs/<feature-id>/02-spec-review.md`

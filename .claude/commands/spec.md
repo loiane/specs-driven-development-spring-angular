@@ -22,7 +22,7 @@ If a ticket is supplied, fetch it via the configured MCP server (see `.claude/sk
 ## Reads
 - The supplied text or ticket.
 - `.specs/_onboarding.md` (for stack context).
-- `.claude/templates/01-spec.md`.
+- `.claude/templates/spec.template.md`.
 - `.claude/checklists/spec-review.md` (so the spec is born review-ready).
 
 ## Writes
@@ -34,7 +34,7 @@ If a ticket is supplied, fetch it via the configured MCP server (see `.claude/sk
 3. Write acceptance criteria as `AC-001`, `AC-002`, ... using strict EARS forms (Ubiquitous, Event-driven, State-driven, Unwanted-behavior, Optional). Every AC must be testable.
 4. List non-functional requirements (latency, throughput, security, observability) with concrete numbers. If unknown, file an `Open Question` instead of guessing.
 5. Capture `Open Questions` as `Q-001`, `Q-002`. **Never invent answers.** Stop and surface the questions to the user.
-6. Render the file using `.claude/templates/01-spec.md`.
+6. Render the file using `.claude/templates/spec.template.md`.
 
 ## Refuse if
 - The input has fewer than 3 distinct nouns/verbs (likely too vague — ask the user to expand).
