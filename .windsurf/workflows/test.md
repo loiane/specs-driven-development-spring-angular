@@ -16,7 +16,7 @@ Author or extend `06-test-plan.md` and add tests that close coverage or mutation
 ## Reads
 - `01-spec.md`, `03-design.md`, `04-tasks.md`.
 - `target/harness-summary.json`, `target/site/jacoco/jacoco.xml`, `target/pit-reports/mutations.xml` (if present).
-- `.windsurf/templates/06-test-plan.md`.
+- `.windsurf/templates/test-plan.template.md`.
 
 ## Writes
 - `.specs/<feature-id>/06-test-plan.md`.

@@ -16,7 +16,7 @@ Audit `01-spec.md` against the spec checklist and produce `02-spec-review.md` wi
 ## Reads
 - `.specs/<feature-id>/01-spec.md`
 - `.windsurf/checklists/spec-review.md`
-- `.windsurf/templates/02-spec-review.md`
+- `.windsurf/templates/spec-review.template.md`
 
 ## Writes
 - `.specs/<feature-id>/02-spec-review.md`
