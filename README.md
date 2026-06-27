@@ -1,10 +1,22 @@
-# Spec-Driven Development for Spring Boot 4
+# Spec-Driven Development for Spring Boot 4 + Angular
 
-A tri-platform toolkit (Claude Code · GitHub Copilot · Windsurf) that drives **Spring Framework 7 / Spring Boot 4** development through a documented, self-validating workflow:
+A tri-platform toolkit (Claude Code · GitHub Copilot · Windsurf) that drives **Spring Framework 7 / Spring Boot 4** and **Angular** full-stack development through a documented, self-validating workflow:
 
 > **specify → review → plan → implement (TDD) → test → validate → review → commit**
 
 The agent validates its own work via a layered harness (build, static analysis, architecture, tests, coverage, mutation, contract, security) instead of relying on a human to inspect every line.
+
+```mermaid
+flowchart LR
+    A["/spec"] --> B["/spec-review"]
+    B --> C["/plan"]
+    C --> D["/build T-NNN"]
+    D --> E["/test"]
+    E --> F["/validate"]
+    F --> G["/review"]
+    G --> H["git commit"]
+    H --> I["/ship"]
+```
 
 ## Why
 
@@ -21,20 +33,21 @@ This toolkit is a **set of files you drop into your repo**, not a package you `n
 
 ### Prerequisites
 
-- Java 25 + Maven 3.9+ (for the harness to actually run).
+- **Backend:** Java 25 + Maven 3.9+ (for the Spring harness to run).
+- **Frontend:** Node.js 22+ and Angular CLI 20+ (for the Angular harness — lint, typecheck, unit tests, build, e2e).
 - At least one supported agent surface installed:
   - [Claude Code](https://docs.claude.com/en/docs/claude-code) (uses `.claude/`)
   - [GitHub Copilot in VS Code](https://code.visualstudio.com/docs/copilot/overview) with chat enabled (uses `.github/`)
   - [Windsurf](https://windsurf.com/) (uses `.windsurf/`)
 - `bash`, `git`, `jq` on your `PATH` (the harness scripts use them).
 
-You only need the directories for the agent(s) you actually use; the others can be deleted.
+You only need the directories for the agent(s) you actually use; the others can be deleted. For backend-only projects, Angular tooling is not required (and vice versa).
 
 ### Option A — Start a new project from this toolkit
 
 ```bash
 # 1. Clone (or use as a template)
-git clone https://github.com/loiane/specs-driven-development.git my-service
+git clone https://github.com/loiane/specs-driven-development-spring-angular.git my-service
 cd my-service
 rm -rf .git && git init
 
@@ -54,7 +67,7 @@ chmod +x .github/scripts/*.sh .claude/hooks/*.sh
 
 ```bash
 # From the root of your existing repo:
-git clone --depth=1 https://github.com/loiane/specs-driven-development.git /tmp/sdd
+git clone --depth=1 https://github.com/loiane/specs-driven-development-spring-angular.git /tmp/sdd
 
 # Copy only what you need (skip the agent dirs you won't use):
 cp -r /tmp/sdd/docs /tmp/sdd/examples .
@@ -182,15 +195,25 @@ Each feature lives under `.specs/<feature-id>/`:
 | --- | --- | --- |
 | `01-spec.md` | Specify | `spec-author` |
 | `02-spec-review.md` | Review specs | `spec-author` |
-| `03-epic-design.md` | Plan (Epic mode) | `spring-architect` |
-| `03a-epic-roadmap.md` | Plan (Epic mode) | `spring-architect` |
-| `03-design.md` | Plan | `spring-architect` |
-| `04-tasks.md` | Plan | `spring-architect` |
-| `05-implementation-log.md` | Implement (TDD) | `spring-implementer` + `spring-test-engineer` |
-| `06-test-plan.md` | Test | `spring-test-engineer` |
-| `07-validation-report.md` | Validate | `spring-validator` |
-| `07a-traceability.md` | Validate | `spring-validator` |
-| `08-code-review.md` | Code review | `spring-code-reviewer` |
+| `03-epic-design.md` | Plan (Epic mode) | `spring-architect` / `angular-architect` |
+| `03a-epic-roadmap.md` | Plan (Epic mode) | `spring-architect` / `angular-architect` |
+| `03-design.md` | Plan | `spring-architect` / `angular-architect` |
+| `04-tasks.md` | Plan | `spring-architect` / `angular-architect` |
+| `05-implementation-log.md` | Implement (TDD) | `spring-implementer` + `spring-test-engineer` / `angular-implementer` + `angular-test-engineer` |
+| `06-test-plan.md` | Test | `spring-test-engineer` / `angular-test-engineer` |
+| `07-validation-report.md` | Validate | `spring-validator` / `angular-validator` |
+| `07a-traceability.md` | Validate | `spring-validator` / `angular-validator` |
+| `08-code-review.md` | Code review | `spring-code-reviewer` / `angular-code-reviewer` |
+
+### Stack routing
+
+Each command defaults to the Spring agent but **automatically delegates to the Angular counterpart** based on feature scope:
+
+- **Backend-only** → Spring agents
+- **Frontend-only** → Angular agents
+- **Full-stack** → both agents collaborate, splitting tasks by stack
+
+The routing contract is documented in each command's `## Stack routing` section. See [.claude/commands/plan.md](.claude/commands/plan.md) for an example.
 
 ## Documentation
 
@@ -204,12 +227,23 @@ Each feature lives under `.specs/<feature-id>/`:
 
 ## Stack assumptions
 
+### Backend (Spring)
+
 - Java 25, Spring Framework 7, Spring Boot 4
 - Maven (Gradle support deferred)
 - REST APIs with OpenAPI
 - Module boundaries enforced via ArchUnit rules (no extra runtime dependency)
 - DB engine + migration tool (Flyway/Liquibase) auto-detected from `pom.xml`
 - Testcontainers integration tests are mandatory when Testcontainers is detected
+
+### Frontend (Angular)
+
+- Angular 20+ with standalone components
+- TypeScript strict mode
+- Route-level code splitting
+- Accessible components (ARIA, keyboard reachability)
+- Unit tests (Karma/Jest) + e2e tests (Cypress/Playwright)
+- Typed API clients (no untyped HTTP response handling)
 
 ## License
 
