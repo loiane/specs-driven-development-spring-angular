@@ -7,6 +7,16 @@ description: Run /plan — see .windsurf/workflows/plan.md for the authoritative
 **Owning agent:** `.windsurf/workflows/spring-architect.md`
 **Skills used:** `epic-slicing-planning`, `spring-task-decomposition`, `spring-boot-4-conventions`, `openapi-contract-first`, `flyway-or-liquibase-detection`, `archunit-rules`, `adr-authoring`, `performance-optimization`
 
+## Stack routing
+
+| Feature scope | Agent |
+|---|---|
+| Backend-only or full-stack (Spring) | `spring-architect` (this agent) |
+| Frontend-only (Angular) | `angular-architect` |
+| Full-stack | Run both: `spring-architect` for backend tasks, `angular-architect` for frontend tasks |
+
+If the feature's `01-spec.md` ACs reference only Angular/UI concerns (components, routes, templates, styles), delegate entirely to `angular-architect`. If ACs span both stacks, produce a unified `03-design.md` but decompose `04-tasks.md` into backend tasks (owned by `spring-architect`) and frontend tasks (owned by `angular-architect`).
+
 ## Purpose
 Translate a `PASS`-verdict spec into planning artifacts:
 

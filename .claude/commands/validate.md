@@ -9,6 +9,16 @@ agent: spring-validator
 **Owning agent:** `.claude/agents/spring-validator.md`
 **Skills used:** `harness-report-parsing`, `jacoco-coverage-policy`, `pit-mutation-tuning`, `requirements-traceability`, `archunit-rules`
 
+## Stack routing
+
+| Changed source | Agent |
+|---|---|
+| Java/Kotlin only | `spring-validator` (this agent) |
+| Angular (`.ts`, `.html`, `.scss`) only | `angular-validator` |
+| Both | Run both validators; merge results into a single `07-validation-report.md` |
+
+Determine scope from `04-tasks.md` file lists or `git diff --name-only`. If only frontend files changed, delegate entirely to `angular-validator`.
+
 ## Purpose
 Run the full 10-layer harness, parse the output, and write `07-validation-report.md` with a single `PASS` / `FAIL` verdict.
 

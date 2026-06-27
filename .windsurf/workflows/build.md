@@ -7,6 +7,15 @@ description: Run /build — see .windsurf/workflows/build.md for the authoritati
 **Owning agent:** `.windsurf/workflows/spring-implementer.md` (collaborates with `spring-test-engineer`)
 **Skills used:** `tdd-red-green-refactor`, `spring-boot-4-conventions`, `clarity-over-cleverness`, `junit5-testcontainers-patterns`, `spring-task-decomposition`
 
+## Stack routing
+
+| Task type | Red step agent | Green/refactor/simplify agent |
+|---|---|---|
+| Backend (`src/main/java/**`, `src/test/java/**`) | `spring-test-engineer` | `spring-implementer` (this agent) |
+| Frontend (`src/**/*.ts`, `src/**/*.html`, `src/**/*.scss`) | `angular-test-engineer` | `angular-implementer` |
+
+Determine the task type from its `files_in_scope` in `04-tasks.md`. If all files are frontend paths, delegate to the Angular agents. If mixed, split into sub-steps: backend first (Spring agents), then frontend (Angular agents).
+
 ## Purpose
 Execute one task end-to-end through the four TDD phases (red → green → refactor → simplify), updating `.tdd-state.json` and appending a block to `05-implementation-log.md` after each phase.
 
