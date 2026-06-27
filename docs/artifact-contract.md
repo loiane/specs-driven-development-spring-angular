@@ -6,8 +6,8 @@ Every feature produces these files, in order. Phase advance is gated on the prio
 .specs/
 ├── _baseline.json                  # repo-wide; brownfield pre-existing failures
 └── <feature-id>/
-    ├── 01-spec.md                  # phase 1 — owner: spring-spec-author
-    ├── 02-spec-review.md           # phase 2 — owner: spring-spec-author
+    ├── 01-spec.md                  # phase 1 — owner: spec-author
+    ├── 02-spec-review.md           # phase 2 — owner: spec-author
     ├── 03-epic-design.md           # phase 3a (optional, Epic mode) — owner: spring-architect
     ├── 03a-epic-roadmap.md         # phase 3a (optional, Epic mode) — owner: spring-architect
     ├── 03-design.md                # phase 3 — owner: spring-architect

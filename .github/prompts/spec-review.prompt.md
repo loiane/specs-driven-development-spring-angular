@@ -7,7 +7,7 @@ model: GPT-5
 # /spec-review
 
 **Phase:** 2 — review
-**Owning agent:** `.github/chatmodes/spring-spec-author.chatmode.md` (review hat)
+**Owning agent:** `.github/chatmodes/spec-author.chatmode.md` (review hat)
 **Skills used:** `ears-spec-authoring`, `requirements-traceability`
 
 ## Purpose

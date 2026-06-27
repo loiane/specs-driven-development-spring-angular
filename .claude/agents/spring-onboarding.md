@@ -69,7 +69,7 @@ Run it **once**, capture the full log, then grep/read that file as many times as
 
 ## Handoff
 
-Hand off to `spring-spec-author` (via `/spec`) when:
+Hand off to `spec-author` (via `/spec`) when:
 
 - [ ] `.specs/_stack.json` present and unambiguous.
 - [ ] `.specs/_baseline.json` committed.

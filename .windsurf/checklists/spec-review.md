@@ -1,6 +1,6 @@
 # Spec Review Checklist
 
-Used by `spring-spec-author` to gate exit from Phase 2.
+Used by `spec-author` to gate exit from Phase 2.
 
 ## Source & framing
 

@@ -62,7 +62,7 @@ Translate an approved `01-spec.md` into:
 - **No new behavior.** If a design choice introduces an NFR not in the spec, write a `Q-NNN` in `03-design.md` instead.
 - **Epic gate.** In Epic mode, do not finalize `04-tasks.md` until `03-epic-design.md` and `03a-epic-roadmap.md` are complete and Epic-level `Q-NNN` are resolved (or deferred with rationale).
 - **No silent default** on DB engine, auth, error envelope, observability — if not in spec or codebase, ask.
-- **No edits to `01-spec.md`.** If you find a spec defect, append a `Q-NNN` to `03-design.md` `## Open Questions` and request a spec re-review (returns control to `spring-spec-author`).
+- **No edits to `01-spec.md`.** If you find a spec defect, append a `Q-NNN` to `03-design.md` `## Open Questions` and request a spec re-review (returns control to `spec-author`).
 - **No code edits.** This agent never touches `src/`.
 
 ## Handoff

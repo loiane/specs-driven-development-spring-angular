@@ -180,8 +180,8 @@ Each feature lives under `.specs/<feature-id>/`:
 
 | File | Phase | Owner |
 | --- | --- | --- |
-| `01-spec.md` | Specify | `spring-spec-author` |
-| `02-spec-review.md` | Review specs | `spring-spec-author` |
+| `01-spec.md` | Specify | `spec-author` |
+| `02-spec-review.md` | Review specs | `spec-author` |
 | `03-epic-design.md` | Plan (Epic mode) | `spring-architect` |
 | `03a-epic-roadmap.md` | Plan (Epic mode) | `spring-architect` |
 | `03-design.md` | Plan | `spring-architect` |

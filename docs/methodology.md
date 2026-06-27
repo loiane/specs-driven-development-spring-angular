@@ -20,7 +20,7 @@ For large features (Epics), Phase 3 runs as two substeps:
 
 ## Cross-cutting rule for phases 1–3: no assumptions
 
-`spring-spec-author` and `spring-architect` operate under a strict **no-invention policy** during specify, spec-review, design, and tasks:
+`spec-author` and `spring-architect` operate under a strict **no-invention policy** during specify, spec-review, design, and tasks:
 
 - **Never guess.** Acceptance criteria, business rules, edge cases, field names, defaults, error semantics, SLAs, security constraints, integrations, and NFRs only enter an artifact if they appear in the source ticket, the conversation, or the existing codebase.
 - **Always log open questions.** Every uncertainty becomes a `Q-NNN` entry under `## Open Questions` on the active artifact, recording: the question, why it matters, what would need to be decided, and any candidate options identified — but **not** a chosen answer.
@@ -33,7 +33,7 @@ This is enforced by templates (`templates/`), checklists (`checklists/`), and th
 
 ## Phase 1 — Specify
 
-**Owner:** `spring-spec-author`
+**Owner:** `spec-author`
 **Artifact:** `01-spec.md`
 **Skills:** `issue-tracker-ingestion`, `ears-spec-authoring`
 
@@ -55,7 +55,7 @@ Steps:
 
 ## Phase 2 — Review specs
 
-**Owner:** `spring-spec-author`
+**Owner:** `spec-author`
 **Artifact:** `02-spec-review.md`
 **Checklist:** `checklists/spec-review.md`
 
@@ -173,8 +173,8 @@ Commit is gated on **zero blockers/majors** or a documented waiver. Request-chan
 
 | Phase | Artifact(s) | Owner | Gate |
 | --- | --- | --- | --- |
-| 1. Specify | `01-spec.md` | `spring-spec-author` | No `Q-NNN` unresolved |
-| 2. Review specs | `02-spec-review.md` | `spring-spec-author` | Checklist green |
+| 1. Specify | `01-spec.md` | `spec-author` | No `Q-NNN` unresolved |
+| 2. Review specs | `02-spec-review.md` | `spec-author` | Checklist green |
 | 3. Plan | `03-design.md`, `04-tasks.md` (+ `03-epic-design.md`, `03a-epic-roadmap.md` for Epics) | `spring-architect` | All AC traced; no `Q-NNN`; Epic artifacts approved when Epic mode is active |
 | 4. Implement | `05-implementation-log.md` | `spring-test-engineer` + `spring-implementer` | Each task: red→green→refactor logged |
 | 5. Test | `06-test-plan.md` | `spring-test-engineer` | Cross-cutting suite mapped |

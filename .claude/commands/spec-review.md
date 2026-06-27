@@ -1,12 +1,12 @@
 ---
 description: Run /spec-review — see .claude/commands/spec-review.md for the authoritative spec.
 argument-hint: see .claude/commands/spec-review.md
-agent: spring-spec-author
+agent: spec-author
 ---
 # /spec-review
 
 **Phase:** 2 — review
-**Owning agent:** `.claude/agents/spring-spec-author.md` (review hat)
+**Owning agent:** `.claude/agents/spec-author.md` (review hat)
 **Skills used:** `ears-spec-authoring`, `requirements-traceability`
 
 ## Purpose
