@@ -1,6 +1,6 @@
 # Spec: <FEATURE-ID> — <short title>
 
-> Owner: `spring-spec-author` · Phase 1 · Template: `.github/templates/spec.template.md`
+> Owner: `spec-author` · Phase 1 · Template: `.github/templates/spec.template.md`
 >
 > **No invention.** If something is not in the source ticket, the conversation, or the codebase, log it as a `Q-NNN` and ask the user.
 

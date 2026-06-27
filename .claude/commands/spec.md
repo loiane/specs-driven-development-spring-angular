@@ -1,12 +1,12 @@
 ---
 description: Run /spec — see .claude/commands/spec.md for the authoritative spec.
 argument-hint: see .claude/commands/spec.md
-agent: spring-spec-author
+agent: spec-author
 ---
 # /spec
 
 **Phase:** 1 — specify
-**Owning agent:** `.claude/agents/spring-spec-author.md`
+**Owning agent:** `.claude/agents/spec-author.md`
 **Skills used:** `ears-spec-authoring`, `issue-tracker-ingestion`, `requirements-traceability`
 
 ## Purpose

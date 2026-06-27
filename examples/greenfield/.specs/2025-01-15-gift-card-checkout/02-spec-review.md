@@ -2,7 +2,7 @@
 
 | Field         | Value                                  |
 |---------------|----------------------------------------|
-| Reviewer      | spring-spec-author (review hat)        |
+| Reviewer      | spec-author (review hat)        |
 | Reviewed      | `01-spec.md` rev 2                     |
 | Verdict       | **PASS**                               |
 | ACs total     | 6                                      |

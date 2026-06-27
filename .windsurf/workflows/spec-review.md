@@ -4,7 +4,7 @@ description: Run /spec-review — see .windsurf/workflows/spec-review.md for the
 # /spec-review
 
 **Phase:** 2 — review
-**Owning agent:** `.windsurf/workflows/spring-spec-author.md` (review hat)
+**Owning agent:** `.windsurf/workflows/spec-author.md` (review hat)
 **Skills used:** `ears-spec-authoring`, `requirements-traceability`
 
 ## Purpose

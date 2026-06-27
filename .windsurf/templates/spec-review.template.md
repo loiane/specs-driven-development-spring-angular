@@ -1,6 +1,6 @@
 # Spec Review: <FEATURE-ID>
 
-> Owner: `spring-spec-author` · Phase 2 · Checklist: `.windsurf/checklists/spec-review.md`
+> Owner: `spec-author` · Phase 2 · Checklist: `.windsurf/checklists/spec-review.md`
 
 ## Inputs
 
@@ -35,7 +35,7 @@
 ## Verdict
 
 - [ ] Approved — proceed to `/design`
-- [ ] Changes requested — return to `spring-spec-author`
+- [ ] Changes requested — return to `spec-author`
 
 Reviewer: <user>
 Date: <YYYY-MM-DD>

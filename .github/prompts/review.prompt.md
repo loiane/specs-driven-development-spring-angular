@@ -10,6 +10,16 @@ model: GPT-5
 **Owning agent:** `.github/chatmodes/spring-code-reviewer.chatmode.md`
 **Skills used:** `spring-code-review-rubric`, `clarity-over-cleverness`, `spring-boot-4-conventions`, `spring-security-baseline`, `performance-optimization`
 
+## Stack routing
+
+| Changed files in diff | Agent |
+|---|---|
+| Java/Kotlin/POM/SQL only | `spring-code-reviewer` (this agent) |
+| Angular (`.ts`, `.html`, `.scss`) only | `angular-code-reviewer` |
+| Both | Run both reviewers; merge findings into a single `08-code-review.md` |
+
+Inspect the diff file list (`git diff --name-only <base>...HEAD`). If it contains only frontend files, delegate entirely to `angular-code-reviewer`.
+
 ## Purpose
 Run a structured self-review of the diff before the user commits. Produces `08-code-review.md` with categorized findings.
 

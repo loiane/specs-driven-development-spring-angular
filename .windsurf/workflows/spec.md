@@ -4,7 +4,7 @@ description: Run /spec — see .windsurf/workflows/spec.md for the authoritative
 # /spec
 
 **Phase:** 1 — specify
-**Owning agent:** `.windsurf/workflows/spring-spec-author.md`
+**Owning agent:** `.windsurf/workflows/spec-author.md`
 **Skills used:** `ears-spec-authoring`, `issue-tracker-ingestion`, `requirements-traceability`
 
 ## Purpose

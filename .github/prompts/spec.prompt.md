@@ -7,7 +7,7 @@ model: GPT-5
 # /spec
 
 **Phase:** 1 — specify
-**Owning agent:** `.github/chatmodes/spring-spec-author.chatmode.md`
+**Owning agent:** `.github/chatmodes/spec-author.chatmode.md`
 **Skills used:** `ears-spec-authoring`, `issue-tracker-ingestion`, `requirements-traceability`
 
 ## Purpose
