@@ -171,10 +171,57 @@ The same gates the agent runs are reachable from a normal terminal:
 ./.github/scripts/traceability.sh <feature-id>
 ```
 
+## Loop engineering (optional)
+
+Once you trust the harness, you can wrap the per-feature commands in **bounded agentic loops** that converge on a checkable goal instead of running forever or giving up too early. The toolkit ships the pattern as the `loop-engineering` skill, plus four concrete loops that compose into an issue-to-merged pipeline:
+
+| Loop | Skill | Drives | Cadence |
+| --- | --- | --- | --- |
+| Spec-sharpen | `spec-sharpen-loop` | issue → a spec that passes `/spec-review` | human-paced |
+| Build | `sdd-build-loop` | sharp spec → a clean, `/review`-approved branch | self-paced |
+| Ship | `pr-quality-gate` | open PR → all CI gates green | polled on CI |
+| Review-response | `pr-review-response` | green PR → every reviewer thread addressed | polled on review |
+
+Human judgment lands at exactly two points — answering genuine product questions at the front, and deciding a branch is worth a PR in the middle. Every loop is bounded, never merges on its own, and escalates when it is stuck.
+
+In Claude Code these run via the native `/loop` command (for example `/loop 10m /pr-quality-gate 1234`). On Copilot and Windsurf you drive the same cadence by re-invoking the skill. See [docs/loop-engineering.md](docs/loop-engineering.md) for the full pattern, the four loop shapes, and the trust you have to earn before running the build loop.
+
+### Running a loop on each tool
+
+The skills are identical across platforms; only the way you *drive the cadence* differs. Claude Code has a native `/loop`; on Copilot and Windsurf the skill runs one pass per prompt and you re-invoke it each cycle (or stop when it reports done).
+
+**Claude Code** — the native `/loop` command supplies the cadence and budget:
+
+```text
+/loop /spec-sharpen-loop 42                         # issue #42 → a reviewed spec (human-paced)
+/loop /sdd-build-loop 2026-05-09-create-customer    # spec → clean reviewed branch (self-paced)
+/loop 10m /pr-quality-gate 1234                      # PR #1234 → all gates green, polling CI
+/loop 15m /pr-review-response 1234                   # work reviewer comments to zero
+```
+
+**GitHub Copilot** — no native `/loop`; prompt the skill in Copilot Chat and re-run it each cycle:
+
+```text
+Run the pr-quality-gate loop on PR 1234: do one pass — check every gate, fix what
+is red, commit and push, then stop. I'll re-run this after each CI cycle until it
+posts "ready to merge".
+```
+
+Copilot loads `.github/skills/pr-quality-gate/SKILL.md`, does a single pass, and stops. Repeat the prompt once per CI run.
+
+**Windsurf** — no native `/loop`; ask Cascade to use the skill, one pass at a time:
+
+```text
+Use the pr-quality-gate skill to drive PR 1234 to merge-ready. Do one pass: read
+the gates, fix failures, commit, push, then stop. Re-invoke me on the next CI run.
+```
+
+Cascade activates `.windsurf/skills/pr-quality-gate/SKILL.md` by model decision. The same pattern works for all four loops — swap in `spec-sharpen-loop`, `sdd-build-loop`, or `pr-review-response` with the matching issue/feature/PR id.
+
 ## Repository layout
 
 ```text
-docs/             methodology · harness-principles · spec-format · platform-mapping · artifact-contract
+docs/             methodology · harness-principles · spec-format · platform-mapping · artifact-contract · loop-engineering
 .claude/          agents · skills · commands · hooks · templates · checklists · maven · settings.json   (Claude Code)
 .github/          chatmodes · prompts · instructions · skills · templates · checklists · maven · scripts · workflows/   (Copilot + CI)
 .windsurf/        rules · workflows · skills · templates · checklists · maven   (Windsurf)
@@ -222,6 +269,7 @@ The routing contract is documented in each command's `## Stack routing` section.
 - [docs/spec-format.md](docs/spec-format.md) — EARS-lite spec format with examples
 - [docs/platform-mapping.md](docs/platform-mapping.md) — how Claude/Copilot/Windsurf artifacts map
 - [docs/artifact-contract.md](docs/artifact-contract.md) — `.specs/<id>/` file layout and `.tdd-state.json` schema
+- [docs/loop-engineering.md](docs/loop-engineering.md) — bounded agentic loops and the issue-to-merged pipeline
 - [examples/greenfield/README.md](examples/greenfield/README.md) — full worked feature
 - [examples/brownfield/README.md](examples/brownfield/README.md) — onboarding-only walkthrough
 
