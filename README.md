@@ -171,10 +171,34 @@ The same gates the agent runs are reachable from a normal terminal:
 ./.github/scripts/traceability.sh <feature-id>
 ```
 
+## Loop engineering (optional)
+
+Once you trust the harness, you can wrap the per-feature commands in **bounded
+agentic loops** that converge on a checkable goal instead of running forever or
+giving up too early. The toolkit ships the pattern as the `loop-engineering`
+skill, plus four concrete loops that compose into an issue-to-merged pipeline:
+
+| Loop | Skill | Drives | Cadence |
+| --- | --- | --- | --- |
+| Spec-sharpen | `spec-sharpen-loop` | issue → a spec that passes `/spec-review` | human-paced |
+| Build | `sdd-build-loop` | sharp spec → a clean, `/review`-approved branch | self-paced |
+| Ship | `pr-quality-gate` | open PR → all CI gates green | polled on CI |
+| Review-response | `pr-review-response` | green PR → every reviewer thread addressed | polled on review |
+
+Human judgment lands at exactly two points — answering genuine product questions
+at the front, and deciding a branch is worth a PR in the middle. Every loop is
+bounded, never merges on its own, and escalates when it is stuck.
+
+In Claude Code these run via the native `/loop` command (for example
+`/loop 10m /pr-quality-gate 1234`). On Copilot and Windsurf you drive the same
+cadence by re-invoking the skill. See
+[docs/loop-engineering.md](docs/loop-engineering.md) for the full pattern, the
+four loop shapes, and the trust you have to earn before running the build loop.
+
 ## Repository layout
 
 ```text
-docs/             methodology · harness-principles · spec-format · platform-mapping · artifact-contract
+docs/             methodology · harness-principles · spec-format · platform-mapping · artifact-contract · loop-engineering
 .claude/          agents · skills · commands · hooks · templates · checklists · maven · settings.json   (Claude Code)
 .github/          chatmodes · prompts · instructions · skills · templates · checklists · maven · scripts · workflows/   (Copilot + CI)
 .windsurf/        rules · workflows · skills · templates · checklists · maven   (Windsurf)
@@ -222,6 +246,7 @@ The routing contract is documented in each command's `## Stack routing` section.
 - [docs/spec-format.md](docs/spec-format.md) — EARS-lite spec format with examples
 - [docs/platform-mapping.md](docs/platform-mapping.md) — how Claude/Copilot/Windsurf artifacts map
 - [docs/artifact-contract.md](docs/artifact-contract.md) — `.specs/<id>/` file layout and `.tdd-state.json` schema
+- [docs/loop-engineering.md](docs/loop-engineering.md) — bounded agentic loops and the issue-to-merged pipeline
 - [examples/greenfield/README.md](examples/greenfield/README.md) — full worked feature
 - [examples/brownfield/README.md](examples/brownfield/README.md) — onboarding-only walkthrough
 
