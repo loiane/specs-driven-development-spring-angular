@@ -173,10 +173,7 @@ The same gates the agent runs are reachable from a normal terminal:
 
 ## Loop engineering (optional)
 
-Once you trust the harness, you can wrap the per-feature commands in **bounded
-agentic loops** that converge on a checkable goal instead of running forever or
-giving up too early. The toolkit ships the pattern as the `loop-engineering`
-skill, plus four concrete loops that compose into an issue-to-merged pipeline:
+Once you trust the harness, you can wrap the per-feature commands in **bounded agentic loops** that converge on a checkable goal instead of running forever or giving up too early. The toolkit ships the pattern as the `loop-engineering` skill, plus four concrete loops that compose into an issue-to-merged pipeline:
 
 | Loop | Skill | Drives | Cadence |
 | --- | --- | --- | --- |
@@ -185,15 +182,9 @@ skill, plus four concrete loops that compose into an issue-to-merged pipeline:
 | Ship | `pr-quality-gate` | open PR → all CI gates green | polled on CI |
 | Review-response | `pr-review-response` | green PR → every reviewer thread addressed | polled on review |
 
-Human judgment lands at exactly two points — answering genuine product questions
-at the front, and deciding a branch is worth a PR in the middle. Every loop is
-bounded, never merges on its own, and escalates when it is stuck.
+Human judgment lands at exactly two points — answering genuine product questions at the front, and deciding a branch is worth a PR in the middle. Every loop is bounded, never merges on its own, and escalates when it is stuck.
 
-In Claude Code these run via the native `/loop` command (for example
-`/loop 10m /pr-quality-gate 1234`). On Copilot and Windsurf you drive the same
-cadence by re-invoking the skill. See
-[docs/loop-engineering.md](docs/loop-engineering.md) for the full pattern, the
-four loop shapes, and the trust you have to earn before running the build loop.
+In Claude Code these run via the native `/loop` command (for example `/loop 10m /pr-quality-gate 1234`). On Copilot and Windsurf you drive the same cadence by re-invoking the skill. See [docs/loop-engineering.md](docs/loop-engineering.md) for the full pattern, the four loop shapes, and the trust you have to earn before running the build loop.
 
 ## Repository layout
 

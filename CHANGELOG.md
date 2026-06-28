@@ -9,12 +9,8 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 ## [Unreleased]
 
 ### Added
-- **Loop engineering** — the `loop-engineering` skill (the six-part loop pattern,
-  four loop shapes, and the issue-to-merged pipeline) plus four concrete loop
-  skills: `spec-sharpen-loop`, `sdd-build-loop`, `pr-quality-gate`, and
-  `pr-review-response`. Mirrored across `.claude/`, `.github/`, and `.windsurf/`.
-- `docs/loop-engineering.md` documenting the loop pattern, shapes, composition,
-  and guardrails, linked from the README.
+- **Loop engineering** — the `loop-engineering` skill (the six-part loop pattern, four loop shapes, and the issue-to-merged pipeline) plus four concrete loop skills: `spec-sharpen-loop`, `sdd-build-loop`, `pr-quality-gate`, and `pr-review-response`. Mirrored across `.claude/`, `.github/`, and `.windsurf/`.
+- `docs/loop-engineering.md` documenting the loop pattern, shapes, composition, and guardrails, linked from the README.
 - `LICENSE` (MIT) at repo root.
 - `.gitignore` covering macOS, IDE, Java/Maven, Node/Angular, and harness artifacts.
 - `.editorconfig` for consistent line endings and indentation.
