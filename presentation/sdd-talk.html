@@ -6,26 +6,64 @@
     <title>Enterprise AI Co-Authoring: SDD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { background: rgb(0, 36, 61) !important; }
-        .reveal { background: rgb(0, 36, 61) !important; }
-        .reveal .slides { background: rgb(0, 36, 61) !important; }
-        .reveal section { background: rgb(0, 36, 61) !important; padding: 20px !important; }
-        .reveal h1, .reveal h2, .reveal h3, .reveal h4 { text-transform: none; margin-bottom: 0.3em !important; }
-        .reveal h2 { font-size: 0.85em !important; line-height: 1.15em !important; }
-        .reveal h3 { font-size: 0.8em !important; line-height: 1.15em !important; }
-        .reveal h4 { font-size: 0.55em !important; margin: 0.3em 0 0.12em 0 !important; }
-        .reveal p { margin: 0.2em 0 !important; font-size: 0.5em !important; line-height: 1.2em !important; }
+        /* ── "Oceanic Precision" theme — fonts: Bebas Neue (h1/h2) · Exo 2 (h3/h4) · DM Sans (body) · JetBrains Mono (code) ── */
+        :root {
+            --bg-primary:    #04091b;
+            --bg-secondary:  #09102a;
+            --bg-card:       rgba(9, 16, 42, 0.92);
+            --text-primary:  #edf2ff;
+            --text-secondary:#9fb0d0;
+            --text-muted:    #5b6f95;
+            --accent-green:  #00ddb3;
+            --accent-blue:   #38c8fa;
+            --accent-purple: #9277ff;
+            --accent-orange: #ff7849;
+            --accent-gold:   #ffcd47;
+            --border-glow:   rgba(0, 221, 179, 0.25);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --gradient-main: linear-gradient(135deg, #00ddb3 0%, #38c8fa 100%);
+            --shadow-glow:   0 0 28px rgba(0,221,179,0.18), 0 0 60px rgba(0,221,179,0.07);
+            --shadow-card:   0 6px 36px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+            --radius: 14px;
+            --gradient-mesh: radial-gradient(ellipse 80% 60% at 0% 0%, rgba(146,119,255,0.09) 0%, transparent 60%),
+                             radial-gradient(ellipse 60% 50% at 100% 100%, rgba(56,200,250,0.08) 0%, transparent 55%),
+                             radial-gradient(ellipse 50% 40% at 40% 60%, rgba(0,221,179,0.05) 0%, transparent 65%);
+        }
+        body { background: var(--bg-primary) !important; background-image: var(--gradient-mesh) !important; }
+        .reveal { background: transparent !important; font-family: 'DM Sans', sans-serif; }
+        .reveal .slides { background: transparent !important; }
+        .reveal section { background: var(--bg-secondary) !important; border: 1px solid var(--border-subtle); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 28px !important; }
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 { text-transform: none; margin-bottom: 0.3em !important; color: var(--text-primary); }
+        .reveal h1, .reveal h2 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; letter-spacing: 0.04em; }
+        .reveal h1, .reveal h2 { background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .reveal h2 { font-size: 0.9em !important; line-height: 1.15em !important; }
+        .reveal h3, .reveal h4 { font-family: 'Exo 2', sans-serif; font-weight: 600; }
+        .reveal h3 { font-size: 0.8em !important; line-height: 1.15em !important; color: var(--accent-blue); }
+        .reveal h4 { font-size: 0.56em !important; margin: 0.3em 0 0.12em 0 !important; color: var(--accent-purple); }
+        .reveal p { margin: 0.2em 0 !important; font-size: 0.5em !important; line-height: 1.25em !important; color: var(--text-secondary); }
         .reveal ul { margin: 0.2em 0 !important; line-height: 1.15em; }
-        .reveal li { margin: 0.12em 0 !important; font-size: 0.5em !important; }
-        .reveal pre { width: 100%; font-size: 0.42em; }
-        .reveal table { font-size: 0.46em; }
-        .reveal td { padding: 0.15em 0.3em; }
-        .pyramid { text-align: center; font-family: monospace; white-space: pre; }
+        .reveal li { margin: 0.12em 0 !important; font-size: 0.5em !important; color: var(--text-secondary); }
+        .reveal strong { color: var(--text-primary); font-weight: 600; }
+        .reveal em { color: var(--accent-green); font-style: normal; font-weight: 500; }
+        .reveal code { font-family: 'JetBrains Mono', monospace; background: rgba(0,221,179,0.1); color: var(--accent-green); padding: 0.12em 0.4em; border-radius: 5px; border: 1px solid rgba(0,221,179,0.2); }
+        .reveal pre { width: 100%; font-size: 0.42em; background: rgba(6,12,30,0.96) !important; border: 1px solid var(--border-subtle); border-left: 3px solid var(--accent-green) !important; border-radius: var(--radius); box-shadow: var(--shadow-card); }
+        .reveal pre code { font-family: 'JetBrains Mono', monospace !important; color: #a9b7d0 !important; background: transparent !important; border: none; padding: 0.8em 1em; }
+        .reveal table { font-size: 0.46em; border-collapse: collapse; width: 100%; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-card); }
+        .reveal table tr:first-child { background: var(--gradient-main); }
+        .reveal table tr:first-child td { color: var(--bg-primary) !important; font-family: 'Exo 2', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+        .reveal table tr:not(:first-child) { background: rgba(9,16,42,0.7); border-bottom: 1px solid var(--border-subtle); }
+        .reveal table tr:not(:first-child):nth-child(even) { background: rgba(15,28,62,0.5); }
+        .reveal table td { padding: 0.18em 0.4em; color: var(--text-secondary); }
+        .pyramid { text-align: center; font-family: 'JetBrains Mono', monospace; white-space: pre; }
         .quote { font-style: italic; font-size: 0.9em; }
-        .problem-box { background: #8B0000; padding: 20px; border-radius: 8px; }
-        .solution-box { background: #006400; padding: 20px; border-radius: 8px; }
-        .highlight { background: rgb(106, 189, 198); color: #fff; padding: 2px 8px; border-radius: 4px; }
+        .problem-box { background: linear-gradient(135deg, rgba(255,92,122,0.12), rgba(255,120,73,0.06)); border-left: 3px solid var(--accent-orange); border-radius: 0 var(--radius) var(--radius) 0; padding: 0.7em 1em; }
+        .solution-box { background: linear-gradient(135deg, rgba(0,221,179,0.12), rgba(56,200,250,0.06)); border-left: 3px solid var(--accent-green); border-radius: 0 var(--radius) var(--radius) 0; padding: 0.7em 1em; }
+        .highlight { background: rgba(0,221,179,0.14); border: 1px solid rgba(0,221,179,0.35); color: var(--accent-green); padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+        .tag { display: inline-block; background: rgba(0,221,179,0.08); border: 1px solid rgba(0,221,179,0.28); color: var(--accent-green); font-family: 'JetBrains Mono', monospace; font-size: 0.42em; padding: 0.3em 0.8em; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em; }
     </style>
 </head>
 <body>
@@ -62,7 +100,7 @@
             <section>
                 <h2 style="margin-bottom: 0.3em;">Meet SDD: Specs-Driven Development</h2>
                 <p style="margin-bottom: 0.4em; font-size: 0.9em;">A <span class="highlight">7-phase workflow</span> that locks AI into rigid specification → validation loop</p>
-                <div style="text-align: left; font-size: 0.55em; line-height: 1.1em; margin: 0;">
+                <div style="text-align: left; margin: 0;">
                     <p style="margin: 0.15em 0;"><strong>1. Specify</strong> → gates: no open questions</p>
                     <p style="margin: 0.15em 0;"><strong>2. Review Specs</strong> → gates: checklist all-green</p>
                     <p style="margin: 0.15em 0;"><strong>3. Plan</strong> → gates: all ACs traced; no open questions</p>
@@ -78,7 +116,7 @@
             <section>
                 <h2 style="margin-bottom: 0.12em !important; font-size: 0.7em !important; line-height: 1.08em !important;">EARS-lite Specs: Tight Specs = Tight Tests = Honest AI</h2>
                 <h4 style="margin: 0.2em 0 0.14em 0; font-size: 0.62em; text-transform: none;">The Five Shapes</h4>
-                <ul style="font-size: 0.54em; line-height: 1.1em; margin: 0;">
+                <ul style="margin: 0;">
                     <li><strong>Ubiquitous:</strong> "The system shall apply a gift card at checkout."</li>
                     <li><strong>Event-driven:</strong> "When customer applies a valid gift card, the system shall reduce order total."</li>
                     <li><strong>State-driven:</strong> "While order is in PAID state, the system shall reject further redemptions."</li>
@@ -93,13 +131,13 @@
             <section>
                 <h2 style="margin-bottom: 0.1em; font-size: 0.78em; line-height: 1.05em;">Example: Gift Card Spec</h2>
                 <h4 style="margin: 0.15em 0 0.08em 0; font-size: 0.5em; text-transform: none;">Acceptance Criteria</h4>
-                <ul style="font-size: 0.46em; line-height: 1.12em; margin: 0 0 0.1em 0;">
+                <ul style="margin: 0 0 0.1em 0;">
                     <li><strong>AC-001:</strong> When customer applies valid gift card with balance &gt; 0, the system shall reduce order total by min(balance, total).</li>
                     <li><strong>AC-002:</strong> When redemption succeeds, the system shall record redeemed amount in the order receipt.</li>
                     <li><strong>AC-003:</strong> If gift card code is unknown, expired, or empty, the system shall reject with error GC_INVALID.</li>
                 </ul>
                 <h4 style="margin: 0.15em 0 0.08em 0; font-size: 0.5em; text-transform: none;">Open Questions</h4>
-                <ul style="font-size: 0.46em; line-height: 1.12em; margin: 0;">
+                <ul style="margin: 0;">
                     <li><strong>Q-001:</strong> Should we auto-reverse redemptions on order cancel?</li>
                     <li>Candidate options: (a) auto-reverse, (b) manual refund flow, (c) reject cancellation</li>
                     <li>Status: open</li>
@@ -110,7 +148,7 @@
             <section>
                 <h2>TDD by Construction: Red → Green → Refactor → Simplify</h2>
                 <h4 style="margin-top: 1.5em;">Phase 4 is Strict TDD</h4>
-                <ul style="font-size: 0.85em;">
+                <ul style="">
                     <li><strong>Red:</strong> Test-engineer writes smallest failing test(s)</li>
                     <li><strong>Green:</strong> Implementer writes minimum code to pass</li>
                     <li><strong>Refactor:</strong> Clean up with tests still green</li>
@@ -197,7 +235,7 @@
             <!-- SLIDE 6b: Harness Properties -->
             <section>
                 <h3>Why a Harness, Not Vibes?</h3>
-                <ul style="font-size: 0.85em; margin-top: 2em;">
+                <ul style=" margin-top: 2em;">
                     <li><strong>Deterministic:</strong> Same commit → same gate outcome. No time-based flake.</li>
                     <li><strong>Fail-fast:</strong> Cheap gates run first. Agent gets actionable feedback immediately.</li>
                     <li><strong>Parseable:</strong> Every layer emits machine-readable reports (XML, JSON). Agent reads and adjusts.</li>
@@ -387,7 +425,7 @@ while harness not all-green:
                     </tr>
                 </table>
                 <h4 style="margin-top: 0.35em; margin-bottom: 0.1em; font-size: 0.52em; text-transform: none;">Why It Matters</h4>
-                <ul style="font-size: 0.46em; line-height: 1.08em; margin-top: 0.05em;">
+                <ul style=" line-height: 1.08em; margin-top: 0.05em;">
                     <li>No orphan tests</li>
                     <li>No uncovered specs</li>
                     <li>No mystery code</li>
@@ -399,7 +437,7 @@ while harness not all-green:
             <section>
                 <h2>Pre-Commit Code Review: Agent + Human</h2>
                 <h4 style="margin-top: 1.5em;">Phase 7: Code Review Rubric</h4>
-                <ul style="font-size: 0.85em;">
+                <ul style="">
                     <li>✓ Spec alignment (every change maps to an AC?)</li>
                     <li>✓ Design contract (boundaries respected? ArchUnit passed?)</li>
                     <li>✓ Spring idioms (constructor injection? Records? No Lombok?)</li>
@@ -433,10 +471,10 @@ while harness not all-green:
             </section>
 
             <!-- SLIDE 10b: Walkthrough Note -->
-            <section data-background="#1a1a1a">
-                <h3 style="color: #FFD700;">🎬 Live Demo or Video Walkthrough</h3>
+            <section>
+                <h3 style="color: var(--accent-gold);">🎬 Live Demo or Video Walkthrough</h3>
                 <p style="margin-top: 2em; font-size: 0.9em;">Recommend: <strong>6-minute recorded demo</strong> showing</p>
-                <ul style="font-size: 0.85em; margin-top: 1.5em;">
+                <ul style=" margin-top: 1.5em;">
                     <li>/spec "Add gift-card discount"</li>
                     <li>User answers Q-001: "Auto-reverse on cancel"</li>
                     <li>/spec-review → 02-spec-review.md</li>
@@ -508,7 +546,7 @@ while harness not all-green:
                 <h4 style="margin-top: 2em;">The Enterprise Reality</h4>
                 <p style="font-size: 0.85em;">You need code that compiles, passes tests, maintains architecture, covers edge cases, avoids CVEs, and stays auditable.</p>
                 <h4 style="margin-top: 1.5em;">SDD is the Guardrail Framework</h4>
-                <ul style="font-size: 0.85em;">
+                <ul style="">
                     <li>Tight specs lock in scope upfront</li>
                     <li>TDD lock-in prevents invention</li>
                     <li>10-layer harness catches any slip</li>
@@ -516,7 +554,7 @@ while harness not all-green:
                     <li>Agent loops until the build is green</li>
                 </ul>
                 <h4 style="margin-top: 1.5em;">The Result</h4>
-                <ul style="font-size: 0.85em;">
+                <ul style="">
                     <li>Features ship <strong>faster</strong> (no back-and-forth)</li>
                     <li>They're <strong>more reliable</strong> (caught by gates, not manual testing)</li>
                     <li>They're <strong>auditable</strong> (full artifact trail)</li>
@@ -525,12 +563,12 @@ while harness not all-green:
             </section>
 
             <!-- SLIDE 12b: Try It -->
-            <section data-background="#006400">
-                <h3 style="color: #FFD700;">Try It Now</h3>
+            <section>
+                <h3 style="color: var(--accent-gold);">Try It Now</h3>
                 <p style="margin-top: 2em; font-size: 0.9em;">This toolkit is <strong>open-source</strong> and ready to drop into any Spring Boot + Angular project.</p>
                 <pre style="margin-top: 1.5em; font-size: 0.8em;">github.com/loiane/specs-driven-development-spring-angular</pre>
-                <h4 style="margin-top: 2em; color: #FFD700;">Next Steps</h4>
-                <ul style="font-size: 0.85em;">
+                <h4 style="margin-top: 2em; color: var(--accent-gold);">Next Steps</h4>
+                <ul style="">
                     <li>Brownfield? Run: <code>/onboard</code></li>
                     <li>Greenfield? Start: <code>/spec "your feature"</code></li>
                     <li>See examples: <code>examples/</code> folder</li>
