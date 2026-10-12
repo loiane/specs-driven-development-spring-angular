@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise AI Co-Authoring: SDD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ── "Oceanic Precision" theme — fonts: Bebas Neue (h1/h2) · Exo 2 (h3/h4) · DM Sans (body) · JetBrains Mono (code) ── */
+        :root {
+            --bg-primary:    #04091b;
+            --bg-secondary:  #09102a;
+            --bg-card:       rgba(9, 16, 42, 0.92);
+            --text-primary:  #edf2ff;
+            --text-secondary:#9fb0d0;
+            --text-muted:    #5b6f95;
+            --accent-green:  #00ddb3;
+            --accent-blue:   #38c8fa;
+            --accent-purple: #9277ff;
+            --accent-orange: #ff7849;
+            --accent-gold:   #ffcd47;
+            --border-glow:   rgba(0, 221, 179, 0.25);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --gradient-main: linear-gradient(135deg, #00ddb3 0%, #38c8fa 100%);
+            --shadow-glow:   0 0 28px rgba(0,221,179,0.18), 0 0 60px rgba(0,221,179,0.07);
+            --shadow-card:   0 6px 36px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+            --radius: 14px;
+            --gradient-mesh: radial-gradient(ellipse 80% 60% at 0% 0%, rgba(146,119,255,0.09) 0%, transparent 60%),
+                             radial-gradient(ellipse 60% 50% at 100% 100%, rgba(56,200,250,0.08) 0%, transparent 55%),
+                             radial-gradient(ellipse 50% 40% at 40% 60%, rgba(0,221,179,0.05) 0%, transparent 65%);
+        }
+        body { background: var(--bg-primary) !important; background-image: var(--gradient-mesh) !important; }
+        .reveal { background: transparent !important; font-family: 'DM Sans', sans-serif; }
+        .reveal .slides { background: transparent !important; }
+        .reveal section { background: var(--bg-secondary) !important; border: 1px solid var(--border-subtle); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 28px !important; }
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 { text-transform: none; margin-bottom: 0.3em !important; color: var(--text-primary); }
+        .reveal h1, .reveal h2 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; letter-spacing: 0.04em; }
+        .reveal h1, .reveal h2 { background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .reveal h2 { font-size: 0.9em !important; line-height: 1.15em !important; }
+        .reveal h3, .reveal h4 { font-family: 'Exo 2', sans-serif; font-weight: 600; }
+        .reveal h3 { font-size: 0.8em !important; line-height: 1.15em !important; color: var(--accent-blue); }
+        .reveal h4 { font-size: 0.56em !important; margin: 0.3em 0 0.12em 0 !important; color: var(--accent-purple); }
+        .reveal p { margin: 0.2em 0 !important; font-size: 0.5em !important; line-height: 1.25em !important; color: var(--text-secondary); }
+        .reveal ul { margin: 0.2em 0 !important; line-height: 1.15em; }
+        .reveal li { margin: 0.12em 0 !important; font-size: 0.5em !important; color: var(--text-secondary); }
+        .reveal strong { color: var(--text-primary); font-weight: 600; }
+        .reveal em { color: var(--accent-green); font-style: normal; font-weight: 500; }
+        .reveal code { font-family: 'JetBrains Mono', monospace; background: rgba(0,221,179,0.1); color: var(--accent-green); padding: 0.12em 0.4em; border-radius: 5px; border: 1px solid rgba(0,221,179,0.2); }
+        .reveal pre { width: 100%; font-size: 0.42em; background: rgba(6,12,30,0.96) !important; border: 1px solid var(--border-subtle); border-left: 3px solid var(--accent-green) !important; border-radius: var(--radius); box-shadow: var(--shadow-card); }
+        .reveal pre code { font-family: 'JetBrains Mono', monospace !important; color: #a9b7d0 !important; background: transparent !important; border: none; padding: 0.8em 1em; }
+        .reveal table { font-size: 0.46em; border-collapse: collapse; width: 100%; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-card); }
+        .reveal table tr:first-child { background: var(--gradient-main); }
+        .reveal table tr:first-child td { color: var(--bg-primary) !important; font-family: 'Exo 2', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+        .reveal table tr:not(:first-child) { background: rgba(9,16,42,0.7); border-bottom: 1px solid var(--border-subtle); }
+        .reveal table tr:not(:first-child):nth-child(even) { background: rgba(15,28,62,0.5); }
+        .reveal table td { padding: 0.18em 0.4em; color: var(--text-secondary); }
+        .pyramid { text-align: center; font-family: 'JetBrains Mono', monospace; white-space: pre; }
+        .quote { font-style: italic; font-size: 0.9em; }
+        .problem-box { background: linear-gradient(135deg, rgba(255,92,122,0.12), rgba(255,120,73,0.06)); border-left: 3px solid var(--accent-orange); border-radius: 0 var(--radius) var(--radius) 0; padding: 0.7em 1em; }
+        .solution-box { background: linear-gradient(135deg, rgba(0,221,179,0.12), rgba(56,200,250,0.06)); border-left: 3px solid var(--accent-green); border-radius: 0 var(--radius) var(--radius) 0; padding: 0.7em 1em; }
+        .highlight { background: rgba(0,221,179,0.14); border: 1px solid rgba(0,221,179,0.35); color: var(--accent-green); padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+        .tag { display: inline-block; background: rgba(0,221,179,0.08); border: 1px solid rgba(0,221,179,0.28); color: var(--accent-green); font-family: 'JetBrains Mono', monospace; font-size: 0.42em; padding: 0.3em 0.8em; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1: Title & Hook -->
+            <section>
+                <h1 style="font-size: 1.6em; line-height: 1.3em;">Spec Driven Development, Harness/Loop Engineering and Everything in Between</h1>
+                <p style="font-size: 0.7em; margin-top: 3em;">Enterprise AI Co-Authoring: From Prompt Engineering to Specs-Driven Development</p>
+            </section>
+
+            <!-- SLIDE 2: The Problem -->
+            <section>
+                <h2>The Problem: Prompt Engineering Doesn't Scale</h2>
+                <div style="text-align: left; margin-top: 1.5em;">
+                    <h4>Episodic Prompting:</h4>
+                    <p>User writes prompt → AI generates code → User inspects and tweaks</p>
+                    <p><span class="highlight">Works for snippets. Breaks at enterprise scale.</span></p>
+                    <br>
+                    <h4>Confidence vs. Correctness:</h4>
+                    <p>LLMs are <span class="highlight">maximally confident when wrong</span></p>
+                    <br>
+                    <h4>Enterprise demands:</h4>
+                    <ul>
+                        <li>✓ Multi-layer validation (compile, test, architecture, coverage, security)</li>
+                        <li>✓ Traceability (which spec? which test? which gate?)</li>
+                        <li>✓ Audit trail (who approved? when? why?)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: Meet SDD -->
+            <section>
+                <h2 style="margin-bottom: 0.3em;">Meet SDD: Specs-Driven Development</h2>
+                <p style="margin-bottom: 0.4em; font-size: 0.9em;">A <span class="highlight">7-phase workflow</span> that locks AI into rigid specification → validation loop</p>
+                <div style="text-align: left; margin: 0;">
+                    <p style="margin: 0.15em 0;"><strong>1. Specify</strong> → gates: no open questions</p>
+                    <p style="margin: 0.15em 0;"><strong>2. Review Specs</strong> → gates: checklist all-green</p>
+                    <p style="margin: 0.15em 0;"><strong>3. Plan</strong> → gates: all ACs traced; no open questions</p>
+                    <p style="margin: 0.15em 0;"><strong>4. Implement</strong> → gates: red→green→refactor logged</p>
+                    <p style="margin: 0.15em 0;"><strong>5. Test</strong> → gates: coverage ≥90% / ≥95% new code</p>
+                    <p style="margin: 0.15em 0;"><strong>6. Validate</strong> → gates: all 10-layer gates green; full traceability</p>
+                    <p style="margin: 0.15em 0;"><strong>7. Review</strong> → gates: zero blockers; human approves</p>
+                </div>
+                <p style="margin-top: 0.4em; font-style: italic; font-size: 0.7em;">Agent validates its own work. Human reviews the result, not every line.</p>
+            </section>
+
+            <!-- SLIDE 4: EARS-lite Specs -->
+            <section>
+                <h2 style="margin-bottom: 0.12em !important; font-size: 0.7em !important; line-height: 1.08em !important;">EARS-lite Specs: Tight Specs = Tight Tests = Honest AI</h2>
+                <h4 style="margin: 0.2em 0 0.14em 0; font-size: 0.62em; text-transform: none;">The Five Shapes</h4>
+                <ul style="margin: 0;">
+                    <li><strong>Ubiquitous:</strong> "The system shall apply a gift card at checkout."</li>
+                    <li><strong>Event-driven:</strong> "When customer applies a valid gift card, the system shall reduce order total."</li>
+                    <li><strong>State-driven:</strong> "While order is in PAID state, the system shall reject further redemptions."</li>
+                    <li><strong>Optional:</strong> "Where multi-currency is enabled, the system shall honor card's home currency."</li>
+                    <li><strong>Unwanted:</strong> "If gift card code is unknown, the system shall reject with error GC_INVALID."</li>
+                </ul>
+                <h4 style="margin: 0.2em 0 0.1em 0; font-size: 0.62em; text-transform: none;">Open Questions (Q-NNN)</h4>
+                <p style="font-size: 0.48em; line-height: 1.1em; margin: 0;">Anything uncertain → mark it Q-001, Q-002, etc. <strong>Agent refuses to move forward until you answer.</strong></p>
+            </section>
+
+            <!-- SLIDE 4b: Example Spec -->
+            <section>
+                <h2 style="margin-bottom: 0.1em; font-size: 0.78em; line-height: 1.05em;">Example: Gift Card Spec</h2>
+                <h4 style="margin: 0.15em 0 0.08em 0; font-size: 0.5em; text-transform: none;">Acceptance Criteria</h4>
+                <ul style="margin: 0 0 0.1em 0;">
+                    <li><strong>AC-001:</strong> When customer applies valid gift card with balance &gt; 0, the system shall reduce order total by min(balance, total).</li>
+                    <li><strong>AC-002:</strong> When redemption succeeds, the system shall record redeemed amount in the order receipt.</li>
+                    <li><strong>AC-003:</strong> If gift card code is unknown, expired, or empty, the system shall reject with error GC_INVALID.</li>
+                </ul>
+                <h4 style="margin: 0.15em 0 0.08em 0; font-size: 0.5em; text-transform: none;">Open Questions</h4>
+                <ul style="margin: 0;">
+                    <li><strong>Q-001:</strong> Should we auto-reverse redemptions on order cancel?</li>
+                    <li>Candidate options: (a) auto-reverse, (b) manual refund flow, (c) reject cancellation</li>
+                    <li>Status: open</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 5: TDD by Construction -->
+            <section>
+                <h2>TDD by Construction: Red → Green → Refactor → Simplify</h2>
+                <h4 style="margin-top: 1.5em;">Phase 4 is Strict TDD</h4>
+                <ul style="">
+                    <li><strong>Red:</strong> Test-engineer writes smallest failing test(s)</li>
+                    <li><strong>Green:</strong> Implementer writes minimum code to pass</li>
+                    <li><strong>Refactor:</strong> Clean up with tests still green</li>
+                    <li><strong>Simplify:</strong> Apply clarity-over-cleverness</li>
+                </ul>
+                <h4 style="margin-top: 1.5em;">Enforcement</h4>
+                <p style="font-size: 0.85em;">A hook prevents production code edits unless <code>.tdd-state.json</code> shows a failing test for the active task.</p>
+                <p style="font-size: 0.85em; margin-top: 1em; font-style: italic;">→ LLM that can only write code after a test fails will never invent features.</p>
+            </section>
+
+            <!-- SLIDE 6: The 10-Layer Harness -->
+            <section>
+                <h2>The 10-Layer Harness: Self-Validation</h2>
+                <table style="font-size: 0.65em; margin-top: 1.5em;">
+                    <tr>
+                        <td><strong>#</strong></td>
+                        <td><strong>Layer</strong></td>
+                        <td><strong>Tool</strong></td>
+                        <td><strong>Failure means</strong></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Format & Lint</td>
+                        <td>Spotless, Checkstyle</td>
+                        <td>Style drift</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Compile</td>
+                        <td>javac</td>
+                        <td>Code doesn't build</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Static analysis</td>
+                        <td>SpotBugs, Error Prone</td>
+                        <td>Bug-prone patterns</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Architecture</td>
+                        <td>ArchUnit</td>
+                        <td>Boundary violation</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Unit + slice tests</td>
+                        <td>JUnit 5, Surefire</td>
+                        <td>Logic regression</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Integration tests</td>
+                        <td>Failsafe, Testcontainers</td>
+                        <td>DB / broker regression</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Coverage</td>
+                        <td>JaCoCo</td>
+                        <td>&lt;90% overall / &lt;95% new</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Mutation</td>
+                        <td>PIT</td>
+                        <td>Surviving mutants</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Contract</td>
+                        <td>OpenAPI + diff</td>
+                        <td>Breaking API change</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Security</td>
+                        <td>OWASP Dep Check</td>
+                        <td>Known CVE in tree</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- SLIDE 6b: Harness Properties -->
+            <section>
+                <h3>Why a Harness, Not Vibes?</h3>
+                <ul style=" margin-top: 2em;">
+                    <li><strong>Deterministic:</strong> Same commit → same gate outcome. No time-based flake.</li>
+                    <li><strong>Fail-fast:</strong> Cheap gates run first. Agent gets actionable feedback immediately.</li>
+                    <li><strong>Parseable:</strong> Every layer emits machine-readable reports (XML, JSON). Agent reads and adjusts.</li>
+                    <li><strong>Baseline-aware:</strong> Brownfield repos track pre-existing failures. Only <em>regressions</em> block.</li>
+                    <li><strong>Incremental:</strong> Coverage and mutation run incrementally locally (full in CI nightly).</li>
+                </ul>
+                <p style="margin-top: 2em; font-style: italic;">Same `.github/scripts/harness.sh` runs locally and in CI. No second source of truth.</p>
+            </section>
+
+            <!-- SLIDE 7: Loop Engineering Intro -->
+            <section>
+                <h2>Loop Engineering: A Control System, Not "Run It Again"</h2>
+                <p>A loop observes the world, compares it to a goal, acts to close the gap, then observes again. The skill isn't in the acting — agents are already good at that. It's in defining <strong>what it observes</strong> and <strong>when it's allowed to stop</strong>.</p>
+                <h4 style="margin-top: 0.6em;">The Shape</h4>
+                <pre style="font-size: 0.4em; text-align: left;">
+observe → goal met? → yes: stop, merge-ready
+                     → no: act (fix + push)
+budget left? → yes: wait → observe again
+            → no: stop, escalate to human
+                </pre>
+                <p style="font-style: italic;">Escalating isn't failure — it's the loop doing its job.</p>
+            </section>
+
+            <!-- SLIDE 7a: Anatomy of a Loop -->
+            <section>
+                <h2>Anatomy of an Agentic Loop: Six Parts</h2>
+                <ul>
+                    <li><strong>Goal:</strong> a checkable definition of "done" — not "make it good"</li>
+                    <li><strong>Sensors:</strong> how it observes state (CI status, coverage report, Sonar API, test re-runs)</li>
+                    <li><strong>Action:</strong> what it changes to close the gap (fix, write a test, commit, push)</li>
+                    <li><strong>Cadence:</strong> how often it runs — event-driven vs. as-fast-as-the-work-allows</li>
+                    <li><strong>Bounded budget:</strong> max iterations or wall-clock cap — the escape hatch</li>
+                    <li><strong>Guardrails:</strong> what it must never do (merge, force-push, disable a test)</li>
+                </ul>
+                <p style="font-style: italic;">Name all six and you have a loop. Otherwise, you have a prompt you're running by hand.</p>
+            </section>
+
+            <!-- SLIDE 7b: Loop 1 - Ship Loop -->
+            <section>
+                <h2>Loop 1: The Ship Loop — a PR That Drives Itself Green</h2>
+                <h4 style="margin-top: 0.4em;">The Loop Engine</h4>
+                <pre style="font-size: 0.4em; text-align: left;">
+while harness not all-green:
+  1. Run harness.sh
+  2. Parse reports (Surefire XML, JaCoCo XML, PIT XML, etc.)
+  3. Synthesize exact code modifications needed
+  4. Commit minimal changes
+  5. Re-run harness
+  repeat (stop at budget; post result and escalate)
+                </pre>
+                <h4 style="margin-top: 0.4em;">Real Example Timing</h4>
+                <ul>
+                    <li>Iteration 1: Coverage fails at 87% → add edge-case test</li>
+                    <li>Iteration 2: Mutation survivors appear → tighten boundary logic</li>
+                    <li>Iteration 3: All 10 layers ✓ → task complete</li>
+                    <li><strong>Total agent time: 5–10 min</strong> (vs. 70 min human manual work)</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 7c: Four Gate Shapes -->
+            <section>
+                <h2>Inside the Ship Loop: Four Gate Shapes</h2>
+                <table style="margin-top: 0.3em;">
+                    <tr>
+                        <td><strong>Gate</strong></td>
+                        <td><strong>Loop shape</strong></td>
+                        <td><strong>"Done" means</strong></td>
+                        <td><strong>Failure mode</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Tests + Checkstyle + Sonar</td>
+                        <td>Converge-to-green</td>
+                        <td>Every check passes</td>
+                        <td>Oscillating: fixing A breaks B</td>
+                    </tr>
+                    <tr>
+                        <td>Coverage</td>
+                        <td>Incremental-to-a-number</td>
+                        <td>Metric crosses threshold</td>
+                        <td>Gaming the metric (empty tests)</td>
+                    </tr>
+                    <tr>
+                        <td>Dependency upgrade</td>
+                        <td>Queue / batch</td>
+                        <td>Work queue is empty</td>
+                        <td>Getting stuck on one hard item</td>
+                    </tr>
+                    <tr>
+                        <td>Flaky-test stabilizer</td>
+                        <td>Repeat-until-confident</td>
+                        <td>Confidence over N runs</td>
+                        <td>Declaring victory after one run</td>
+                    </tr>
+                </table>
+                <p style="font-style: italic;">Same outer loop. Each gate just answers "are you green?" in its own way.</p>
+            </section>
+
+            <!-- SLIDE 7d: Loop 2 - Build Loop -->
+            <section>
+                <h2>Loop 2: The Build Loop — Spec to a Clean, Reviewed Branch</h2>
+                <h4 style="margin-top: 0.4em;">Goal / Sensors / Action</h4>
+                <p>Drains the <code>.tdd-state.json</code> task queue (T-001, T-002, …) via <code>/build</code>, then converges on <code>/validate</code> + <code>/review</code> until APPROVE with zero must-fix findings.</p>
+                <h4 style="margin-top: 0.4em;">Cadence &amp; Budget</h4>
+                <p>Self-paced — no CI to wait on, so it runs the next step the instant the last one finishes. Capped at 5 review-fix rounds before escalating.</p>
+                <h4 style="margin-top: 0.4em;">Guardrails</h4>
+                <p>Feature branch only, never main. Never merges or opens the PR. Never weakens a test, lowers a threshold, or edits the spec to force a pass.</p>
+            </section>
+
+            <!-- SLIDE 7e: Full Pipeline -->
+            <section>
+                <h2>The Full Pipeline: Four Loops, Two Human Checkpoints</h2>
+                <table style="margin-top: 0.3em;">
+                    <tr>
+                        <td><strong>Loop</strong></td>
+                        <td><strong>Cadence</strong></td>
+                        <td><strong>Converges on</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Spec-sharpening</td>
+                        <td>Human-paced</td>
+                        <td><code>/spec-review</code> PASS, zero open questions</td>
+                    </tr>
+                    <tr>
+                        <td>Build loop</td>
+                        <td>Self-paced</td>
+                        <td>Tasks done, <code>/validate</code> clean, <code>/review</code> APPROVE</td>
+                    </tr>
+                    <tr>
+                        <td>Ship loop</td>
+                        <td>Polls CI (~10 min)</td>
+                        <td>All gates green, merge-ready</td>
+                    </tr>
+                    <tr>
+                        <td>Review-response</td>
+                        <td>Polls review activity</td>
+                        <td>No unresolved threads, gates stay green</td>
+                    </tr>
+                </table>
+                <p style="font-style: italic;">Human judgment lands at exactly two points: is the intent right, and is this branch worth a PR?</p>
+            </section>
+
+            <!-- SLIDE 7f: Trust Gate -->
+            <section>
+                <h2>Trust Gate: Earning the Right to Auto-Commit</h2>
+                <h4 style="margin-top: 0.4em;">You're ready when...</h4>
+                <ul>
+                    <li><code>/review</code> rarely surfaces something you disagree with</li>
+                    <li>Your skills encode <strong>your</strong> team's standards, not generic defaults</li>
+                    <li>Your sensors actually fail loudly on the mistakes you care about</li>
+                    <li>The spec passed <code>/spec-review</code> with zero open questions</li>
+                    <li>The feature is a pattern you've shipped before</li>
+                </ul>
+                <h4 style="margin-top: 0.4em;">Non-negotiables, always</h4>
+                <ul>
+                    <li>Feature branch only, never main</li>
+                    <li>Mandatory human validation round before the PR opens</li>
+                    <li>Bounded budget on every review-fix round</li>
+                </ul>
+                <p style="font-style: italic;">Trusting AI 100% is a disaster waiting to happen — it's still your name on the commit.</p>
+            </section>
+
+            <!-- SLIDE 8: Traceability -->
+            <section>
+                <h2 style="font-size: 0.78em; line-height: 1.08em; margin-bottom: 0.12em;">Requirements Traceability: AC ↔ Test ↔ Code ↔ Gate</h2>
+                <h4 style="margin-top: 0.3em; margin-bottom: 0.1em; font-size: 0.52em; text-transform: none;">The Traceability Matrix (Phase 6)</h4>
+                <table style="font-size: 0.42em; line-height: 1.08em; margin-top: 0.25em;">
+                    <tr>
+                        <td><strong>AC-ID</strong></td>
+                        <td><strong>Tasks</strong></td>
+                        <td><strong>Tests (status)</strong></td>
+                        <td><strong>Code symbols</strong></td>
+                        <td><strong>Gates</strong></td>
+                    </tr>
+                    <tr>
+                        <td>AC-001</td>
+                        <td>T-001</td>
+                        <td>DiscountCodeValidationTest::testValidCodeReducesTotal ✓</td>
+                        <td>DiscountCodeValidator::validate</td>
+                        <td>Layer 5, 7 ✓</td>
+                    </tr>
+                    <tr>
+                        <td>AC-002</td>
+                        <td>T-001</td>
+                        <td>DiscountCodeValidationTest::testUnknownCodeRejectsWithD_INVALID ✓</td>
+                        <td>DiscountCodeValidator::validate</td>
+                        <td>Layer 5, 7 ✓</td>
+                    </tr>
+                </table>
+                <h4 style="margin-top: 0.35em; margin-bottom: 0.1em; font-size: 0.52em; text-transform: none;">Why It Matters</h4>
+                <ul style=" line-height: 1.08em; margin-top: 0.05em;">
+                    <li>No orphan tests</li>
+                    <li>No uncovered specs</li>
+                    <li>No mystery code</li>
+                    <li><strong>Complete chain of custody for audits</strong></li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 9: Code Review -->
+            <section>
+                <h2>Pre-Commit Code Review: Agent + Human</h2>
+                <h4 style="margin-top: 1.5em;">Phase 7: Code Review Rubric</h4>
+                <ul style="">
+                    <li>✓ Spec alignment (every change maps to an AC?)</li>
+                    <li>✓ Design contract (boundaries respected? ArchUnit passed?)</li>
+                    <li>✓ Spring idioms (constructor injection? Records? No Lombok?)</li>
+                    <li>✓ Test quality (Arrange/Act/Assert? Name behavior?)</li>
+                    <li>✓ Security baseline (no auth bypass? No SQL injection?)</li>
+                    <li>✓ Mutation score (did we add code that survives mutations?)</li>
+                    <li>✓ Clarity (readable? Can a junior engineer understand it?)</li>
+                </ul>
+                <h4 style="margin-top: 1.5em;">Severity Classification</h4>
+                <p style="font-size: 0.85em;"><strong>Blocker</strong> | <strong>Major</strong> | <strong>Minor</strong> | <strong>Nit</strong></p>
+                <p style="font-size: 0.8em; margin-top: 1em;"><strong>Verdict:</strong> Zero blockers/majors → APPROVED. <em>Human still approves the PR.</em></p>
+            </section>
+
+            <!-- SLIDE 10: End-to-End Walkthrough -->
+            <section>
+                <h2>End-to-End: Spec → Ship in 6 Minutes</h2>
+                <h4 style="margin-top: 1em; font-size: 0.9em;">Phase 1: Spec</h4>
+                <p style="font-size: 0.75em;">Draft `01-spec.md` → User answers Q-NNN → Phase complete</p>
+                <h4 style="font-size: 0.9em;">Phase 2: Spec Review</h4>
+                <p style="font-size: 0.75em;">Run checklist: testable? atomic? no implementation leakage? → Produce `02-spec-review.md`</p>
+                <h4 style="font-size: 0.9em;">Phase 3: Plan</h4>
+                <p style="font-size: 0.75em;">Produce `03-design.md` (architecture, API shapes, DB schema) + `04-tasks.md` (T-001, T-002, ...)</p>
+                <h4 style="font-size: 0.9em;">Phase 4: Implement</h4>
+                <p style="font-size: 0.75em;">For each task: red test → green code → refactor → simplify → coverage ≥95%</p>
+                <h4 style="font-size: 0.9em;">Phase 6: Validate</h4>
+                <p style="font-size: 0.75em;">Run harness → all 10 layers ✓ → produce `07-validation-report.md` + `07a-traceability.md`</p>
+                <h4 style="font-size: 0.9em;">Phase 7: Review</h4>
+                <p style="font-size: 0.75em;">Produce `08-code-review.md` → APPROVED</p>
+                <h4 style="font-size: 0.9em;">Commit</h4>
+                <p style="font-size: 0.75em;"><em>You</em> run `git commit` (agent never commits automatically)</p>
+            </section>
+
+            <!-- SLIDE 10b: Walkthrough Note -->
+            <section>
+                <h3 style="color: var(--accent-gold);">🎬 Live Demo or Video Walkthrough</h3>
+                <p style="margin-top: 2em; font-size: 0.9em;">Recommend: <strong>6-minute recorded demo</strong> showing</p>
+                <ul style=" margin-top: 1.5em;">
+                    <li>/spec "Add gift-card discount"</li>
+                    <li>User answers Q-001: "Auto-reverse on cancel"</li>
+                    <li>/spec-review → 02-spec-review.md</li>
+                    <li>/plan → 03-design.md + 04-tasks.md</li>
+                    <li>/build T-001 → Red → Green → Refactor</li>
+                    <li>Harness runs, coverage shows 92% → agent adds test → 96%</li>
+                    <li>/validate → all 10 layers ✓</li>
+                    <li>/review → APPROVED</li>
+                    <li>git commit</li>
+                </ul>
+                <p style="margin-top: 1.5em; font-size: 0.8em; font-style: italic;">Bottom line: Feature complete, spec'd, tested, validated, reviewed. No surprises.</p>
+            </section>
+
+            <!-- SLIDE 11: SDD vs. Prompt Engineering -->
+            <section>
+                <h2>SDD vs. Prompt Engineering</h2>
+                <table style="font-size: 0.65em; margin-top: 1.5em;">
+                    <tr>
+                        <td><strong>Aspect</strong></td>
+                        <td><strong>Prompt Engineering</strong></td>
+                        <td><strong>SDD</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spec</strong></td>
+                        <td>"build me a checkout flow"</td>
+                        <td>Atomic ACs + open questions + review</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Test</strong></td>
+                        <td>"seems good"</td>
+                        <td>Red→green→refactor logged + TDD enforced</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validation</strong></td>
+                        <td>Run tests manually</td>
+                        <td>10-layer harness, all automated, reports parseable</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Traceability</strong></td>
+                        <td>None</td>
+                        <td>AC ↔ test ↔ code ↔ gate</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Regression</strong></td>
+                        <td>Who knows?</td>
+                        <td>Baseline + diff catch new failures</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Audit</strong></td>
+                        <td>"I wrote this"</td>
+                        <td>Full artifact chain + phase gates</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Re-run</strong></td>
+                        <td>Manual; different every time</td>
+                        <td>Deterministic; same code → same result</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Human role</strong></td>
+                        <td>Inspect every line</td>
+                        <td>Review result + approve code review</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- SLIDE 12: Closing -->
+            <section>
+                <h2>Production-Ready AI Means Defensive, Not Daring</h2>
+                <h4 style="margin-top: 2em;">The Enterprise Reality</h4>
+                <p style="font-size: 0.85em;">You need code that compiles, passes tests, maintains architecture, covers edge cases, avoids CVEs, and stays auditable.</p>
+                <h4 style="margin-top: 1.5em;">SDD is the Guardrail Framework</h4>
+                <ul style="">
+                    <li>Tight specs lock in scope upfront</li>
+                    <li>TDD lock-in prevents invention</li>
+                    <li>10-layer harness catches any slip</li>
+                    <li>Traceability chain proves what shipped and why</li>
+                    <li>Agent loops until the build is green</li>
+                </ul>
+                <h4 style="margin-top: 1.5em;">The Result</h4>
+                <ul style="">
+                    <li>Features ship <strong>faster</strong> (no back-and-forth)</li>
+                    <li>They're <strong>more reliable</strong> (caught by gates, not manual testing)</li>
+                    <li>They're <strong>auditable</strong> (full artifact trail)</li>
+                    <li><strong>Your team stays in control.</strong> The agent is a co-author, not a black box.</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 12b: Try It -->
+            <section>
+                <h3 style="color: var(--accent-gold);">Try It Now</h3>
+                <p style="margin-top: 2em; font-size: 0.9em;">This toolkit is <strong>open-source</strong> and ready to drop into any Spring Boot + Angular project.</p>
+                <pre style="margin-top: 1.5em; font-size: 0.8em;">github.com/loiane/specs-driven-development-spring-angular</pre>
+                <h4 style="margin-top: 2em; color: var(--accent-gold);">Next Steps</h4>
+                <ul style="">
+                    <li>Brownfield? Run: <code>/onboard</code></li>
+                    <li>Greenfield? Start: <code>/spec "your feature"</code></li>
+                    <li>See examples: <code>examples/</code> folder</li>
+                </ul>
+                <p style="margin-top: 2em; font-style: italic; font-size: 0.85em;">Prompt engineering gets you a draft. Specs-driven development gets you production code.</p>
+            </section>
+
+            <!-- SLIDE 13: Q&A -->
+            <section>
+                <h2>Questions?</h2>
+                <p style="margin-top: 3em; font-size: 0.9em;">Open for discussion</p>
+                <p style="margin-top: 2em; font-size: 0.8em;">
+                    <strong>Repo:</strong> github.com/loiane/specs-driven-development-spring-angular<br>
+                    <strong>Docs:</strong> docs/methodology.md, docs/harness-principles.md, docs/spec-format.md
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            width: 960,
+            height: 700,
+            margin: 0.1,
+            transition: 'slide',
+            transitionSpeed: 'default'
+        });
+    </script>
+</body>
+</html>
