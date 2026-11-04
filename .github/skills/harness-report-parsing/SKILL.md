@@ -30,28 +30,29 @@ authoritative_references:
 
 ## Output shape (`harness-summary.json`)
 
-`.github/scripts/harness.sh --report` emits a single JSON document consumed by `spring-validator`:
+`.github/scripts/harness.sh --report` prints a single JSON document on stdout (build output goes to stderr) and also writes it to `target/harness-summary.json`. The script exits 0 when every gate is `pass` or `skipped`, 1 when any gate fails, and 2 when a prerequisite is missing.
 
 ```json
 {
-  "git_sha": "abc1234",
   "started_at": "2026-04-18T10:30:00Z",
   "finished_at": "2026-04-18T10:38:42Z",
+  "git_sha": "abc1234",
+  "stack": { "...": "output of detect-stack.sh" },
   "gates": {
-    "format":   { "status": "pass" },
-    "compile":  { "status": "pass" },
-    "static":   { "status": "pass", "spotbugs": { "high": 0, "medium": 0 }, "checkstyle": { "violations": 0 } },
-    "arch":     { "status": "pass" },
-    "unit":     { "status": "pass", "tests": 412, "failures": 0, "errors": 0, "skipped": 2, "skipped_reasons": ["DisabledReason: SHOP-9 flaky"] },
-    "it":       { "status": "pass", "tests": 47, "failures": 0 },
-    "coverage": { "status": "pass", "line": 0.93, "branch": 0.91, "new_code_line": 0.97 },
-    "mutation": { "status": "pass", "kill_rate": 0.84, "survived_in_changed": 0 },
-    "contract": { "status": "pass", "breaking": 0, "non_breaking": 3 },
-    "security": { "status": "pass", "high": 0, "critical": 0, "waivers": 1 }
+    "build":    { "status": "pass", "exit_code": 0 },
+    "unit":     { "status": "pass", "tests": 412, "failures": 0, "errors": 0, "skipped": 2 },
+    "it":       { "status": "pass", "tests": 47, "failures": 0, "errors": 0, "skipped": 0 },
+    "coverage": { "status": "pass", "line": 0.93, "branch": 0.91 },
+    "mutation": { "status": "pass", "exit_code": 0, "kill_rate": 0.84, "killed": 84, "survived": 16, "no_coverage": 0, "total": 100 }
   },
   "overall": "pass"
 }
 ```
+
+- `build` is the result of `mvn verify`, which runs the format, compile, static-analysis, architecture and security layers. When it fails, read those layers' own reports (table above) to say which one broke.
+- `mutation` is `skipped` when PIT is not configured or the build failed, and `fail` when PIT exits non-zero or writes no report.
+- The contract (`target/openapi-diff.json`) and security (`target/dependency-check-report.json`) layers are not summarised here; parse their reports directly.
+- New-code coverage comes from `.github/scripts/check-new-code-coverage.sh` (`target/new-code-coverage.json`), not from this summary.
 
 ## Parsing rules
 
@@ -71,13 +72,13 @@ authoritative_references:
 
 ## JaCoCo new-code calculation
 
-1. `git diff --unified=0 origin/main...HEAD -- '*.java'` → list of `(file, line-range)`.
+1. `git diff --unified=0 $(git merge-base origin/main HEAD) -- 'src/main/java/*.java'` (working tree, so uncommitted changes count) plus untracked files → list of `(file, line-range)`.
 2. For each file, read `jacoco.xml` `<class name="...">/<sourcefilename>` matching.
 3. Inside `<line nr="N" mi="X" ci="Y" mb="A" cb="B"/>`:
    - `mi` = missed instructions
    - `ci` = covered instructions
    - A line counts as "covered" if `ci > 0`. "Missed" if `mi > 0` and `ci == 0`.
-4. New-code coverage = covered ÷ (covered + missed) over diff lines only.
+4. New-code coverage = covered ÷ (covered + missed) over diff lines only. Lines with no `<line>` entry (comments, blank lines, imports) are not executable and are ignored. No executable new lines = `pass`.
 
 ## PIT mutants in changed packages
 

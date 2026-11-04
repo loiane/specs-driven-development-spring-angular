@@ -186,6 +186,106 @@ else
   fail "detects postgresql + flyway" "$out"
 fi
 
+echo "check-new-code-coverage.sh"
+new_project newcov
+git_q() { git -C "$PROJECT" -c user.name=t -c user.email=t@t -c commit.gpgsign=false "$@" >/dev/null 2>&1; }
+git_q init -q -b main
+mkdir -p "$PROJECT/src/main/java/com/x" "$PROJECT/target/site/jacoco"
+printf 'package com.x;\nclass Foo {\n  int a() { return 1; }\n}\n' > "$PROJECT/src/main/java/com/x/Foo.java"
+echo target/ > "$PROJECT/.gitignore"
+git_q add -A && git_q commit -q -m base
+git_q checkout -q -b feature
+# Line 3 changed and line 4 added (executable); line 5 is a comment (not in JaCoCo).
+printf 'package com.x;\nclass Foo {\n  int a() { return 2; }\n  int b() { return 3; }\n  // note\n}\n' > "$PROJECT/src/main/java/com/x/Foo.java"
+printf 'package com.x;\nclass Bar {\n  int c() { return 4; }\n}\n' > "$PROJECT/src/main/java/com/x/Bar.java"
+# Single-line report, as JaCoCo 0.8.x may write it.
+jacoco_report() {
+  printf '<?xml version="1.0"?><report name="x"><package name="com/x"><sourcefile name="Foo.java"><line nr="2" mi="0" ci="3"/><line nr="3" mi="0" ci="2"/><line nr="4" mi="%s" ci="%s"/></sourcefile><sourcefile name="Bar.java"><line nr="3" mi="0" ci="2"/></sourcefile></package></report>' "$1" "$2" \
+    > "$PROJECT/target/site/jacoco/jacoco.xml"
+}
+run_newcov() { out="$(cd "$PROJECT" && BASE_REF=main "$BASH" "$SCRIPTS/check-new-code-coverage.sh" 2>&1)"; rc=$?; }
+jacoco_report 0 2
+run_newcov
+expect_rc "passes when every new executable line is covered" 0 "$rc" "$out"
+detail="$out"
+check "counts changed, added and untracked lines but not comments" \
+  jq -e '.total_new_lines == 3 and .covered_new_lines == 3' "$PROJECT/target/new-code-coverage.json"
+jacoco_report 2 0
+run_newcov
+expect_rc "fails below the threshold" 1 "$rc" "$out"
+check "reports 2 of 3 lines covered" jq -e '.covered_new_lines == 2 and .ratio == 0.6667' "$PROJECT/target/new-code-coverage.json"
+out="$(cd "$PROJECT" && NEW_CODE_THRESHOLD=0.5 BASE_REF=main "$BASH" "$SCRIPTS/check-new-code-coverage.sh" 2>&1)"; rc=$?
+expect_rc "honours NEW_CODE_THRESHOLD" 0 "$rc" "$out"
+detail=""
+git_q stash -u
+run_newcov
+expect_rc "passes with no new code" 0 "$rc" "$out"
+out="$(cd "$PROJECT" && BASE_REF=no-such-ref "$BASH" "$SCRIPTS/check-new-code-coverage.sh" 2>&1)"; rc=$?
+expect_rc "errors on an unknown BASE_REF" 2 "$rc" "$out"
+rm "$PROJECT/target/site/jacoco/jacoco.xml"
+run_newcov
+expect_rc "errors without jacoco.xml" 2 "$rc" "$out"
+
+echo "harness.sh"
+new_project harness
+fakebin="$WORK/fake-mvn-bin"
+mkdir -p "$fakebin" "$PROJECT/svc"
+# Fake mvn: writes a surefire report and exits with $FAKE_MVN_RC; logs each call.
+cat > "$fakebin/mvn" <<'MVN'
+#!/usr/bin/env bash
+echo "mvn $*" >> "${FAKE_MVN_LOG:?}"
+echo "[INFO] fake maven output"
+mkdir -p target/surefire-reports
+printf '<testsuite tests="3" failures="%s" errors="0" skipped="0"/>' "${FAKE_TEST_FAILURES:-0}" \
+  > target/surefire-reports/TEST-a.xml
+case "$*" in *mutationCoverage*)
+  if [ -n "${FAKE_PIT_REPORT:-}" ]; then
+    mkdir -p target/pit-reports
+    echo '<mutations><mutation status="KILLED"/><mutation status="KILLED"/><mutation status="TIMED_OUT"/><mutation status="SURVIVED"/></mutations>' \
+      > target/pit-reports/mutations.xml
+  fi ;;
+esac
+exit "${FAKE_MVN_RC:-0}"
+MVN
+chmod +x "$fakebin/mvn"
+printf '<project><artifactId>pitest-maven</artifactId></project>' > "$PROJECT/svc/pom.xml"
+git_q init -q
+export FAKE_MVN_LOG="$WORK/mvn.log"
+run_harness() {
+  : > "$FAKE_MVN_LOG"
+  out="$(cd "$PROJECT" && PATH="$fakebin:$PATH" "$BASH" "$SCRIPTS/harness.sh" --module svc "$@" 2>"$WORK/harness.err")"
+  rc=$?
+}
+summary="$PROJECT/svc/target/harness-summary.json"
+FAKE_MVN_RC=1 FAKE_TEST_FAILURES=1 run_harness --report
+expect_rc "exits 1 when mvn verify fails" 1 "$rc" "$(cat "$WORK/harness.err")"
+detail="$out"
+check "--report prints only JSON on stdout" jq -e '.overall == "fail"' <<< "$out"
+check "writes the summary even when the build fails" \
+  jq -e '.gates.build == {"status":"fail","exit_code":1} and .gates.unit.status == "fail"' "$summary"
+detail="$(cat "$FAKE_MVN_LOG")"
+check "skips mutation testing after a failed build" test "$(grep -c pitest "$FAKE_MVN_LOG")" -eq 0
+FAKE_PIT_REPORT=1 run_harness --report
+expect_rc "exits 0 when every gate passes" 0 "$rc" "$(cat "$WORK/harness.err")"
+check "runs mutation testing after a green build" grep -q pitest "$FAKE_MVN_LOG"
+detail="$out"
+check "reports the mutation kill rate" jq -e '.gates.mutation.status == "pass" and .gates.mutation.kill_rate == 0.75' <<< "$out"
+rm -rf "$PROJECT/svc/target/pit-reports"
+run_harness
+expect_rc "exits 1 when PIT leaves no report" 1 "$rc" "$(cat "$WORK/harness.err")"
+check "fails the mutation gate when PIT leaves no report" \
+  jq -e '.gates.mutation.status == "fail" and .overall == "fail"' "$summary"
+detail=""
+FAKE_MVN_RC=1 run_harness --baseline
+expect_rc "--baseline exits 0 even when gates fail" 0 "$rc" "$(cat "$WORK/harness.err")"
+detail="$out"
+check "--baseline writes .specs/_baseline.json at the repo root" \
+  jq -e '.overall == "fail" and .gates.build.status == "fail"' "$PROJECT/.specs/_baseline.json"
+check "--baseline prints the same JSON on stdout" jq -e '.captured_at' <<< "$out"
+detail=""
+run_harness --bogus
+expect_rc "rejects unknown options" 2 "$rc" "$(cat "$WORK/harness.err")"
+
 echo ".claude/settings.json"
 # shellcheck disable=SC2016 # literal $CLAUDE_PROJECT_DIR prefix in settings.json
 missing_hooks="$(jq -r '.hooks[][].hooks[].command' "$ROOT/.claude/settings.json" \

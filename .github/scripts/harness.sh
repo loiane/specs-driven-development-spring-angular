@@ -1,20 +1,31 @@
 #!/usr/bin/env bash
 # harness.sh
-# The agent's self-validation harness. Runs the 10 layers and emits a single
-# JSON summary consumed by spring-validator.
+# The agent's self-validation harness. Runs the Maven build (format, compile,
+# static analysis, architecture, unit, integration, coverage, security), the
+# optional PIT mutation layer and the OpenAPI diff, then writes a JSON summary
+# to target/harness-summary.json for spring-validator.
 #
 # Usage:
-#   ./scripts/harness.sh                  # run; print human summary; exit non-zero on failure
-#   ./scripts/harness.sh --report         # run; emit harness-summary.json to stdout
-#   ./scripts/harness.sh --baseline       # run in capture mode for brownfield onboarding
+#   .github/scripts/harness.sh [--module <dir>]               # human summary
+#   .github/scripts/harness.sh [--module <dir>] --report      # summary JSON on stdout
+#   .github/scripts/harness.sh [--module <dir>] --baseline    # baseline JSON on stdout,
+#                                                             # also written to .specs/_baseline.json
+# In --report and --baseline modes all build output goes to stderr, so stdout
+# can be redirected to a file.
+#
+# Exit:
+#   0 = every gate passed or was skipped (always 0 in --baseline mode)
+#   1 = at least one gate failed (including a failing `mvn verify`)
+#   2 = usage error or missing prerequisite (jq, python3, mvn)
+#
+# Requires: bash 3.2+, git, jq, python3, mvn.
 
 set -euo pipefail
 
-# Resolve the script's own directory BEFORE any cd, so --module works regardless
-# of relative invocation path.
+# Resolve paths BEFORE any cd, so --module works regardless of invocation path.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INVOKE_DIR="$(pwd)"
 
-# Optional first arg: --module <path> to cd into a Maven module (multi-project repos).
 if [ "${1:-}" = "--module" ]; then
   shift
   MODULE_DIR="${1:-}"
@@ -24,49 +35,69 @@ if [ "${1:-}" = "--module" ]; then
 fi
 
 MODE="${1:-run}"
+case "$MODE" in
+  run|--report|--baseline) ;;
+  *) echo "harness: unknown option: $MODE (expected --report or --baseline)" >&2; exit 2 ;;
+esac
+
+for tool in jq python3 mvn; do
+  command -v "$tool" >/dev/null 2>&1 || { echo "harness: '$tool' is required but not on PATH" >&2; exit 2; }
+done
+
+# fd 3 carries the result; in machine-readable modes everything else goes to stderr.
+if [ "$MODE" = "run" ]; then
+  exec 3>&1
+else
+  exec 3>&1 1>&2
+fi
+
 SUMMARY="target/harness-summary.json"
 mkdir -p target
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-# Helper: timestamped section
 section() { echo "=== $* ==="; }
 
-# Detect stack so we know which layers to enforce.
 STACK_JSON="$("$SCRIPT_DIR/detect-stack.sh" pom.xml 2>/dev/null || echo '{}')"
 
 has_layer() {
   echo "$STACK_JSON" | jq -r ".harness_layers.$1 // false"
 }
 
-# 1-9 sequential layers via Maven verify; PIT separately under -Ppit.
+# Layers 1-9 run inside `mvn verify`. A failure must not abort the script:
+# the summary is still written so the validator can explain what broke.
 section "format + compile + static + arch + unit + it + coverage + security"
-mvn -B -ntp verify
+VERIFY_RC=0
+mvn -B -ntp verify || VERIFY_RC=$?
 
+PIT_RC=""
 if [ "$(has_layer pit)" = "true" ]; then
-  section "mutation (incremental)"
-  PIT_RC=0
-  mvn -B -ntp -Ppit org.pitest:pitest-maven:mutationCoverage || PIT_RC=$?
-  [ "$PIT_RC" -eq 0 ] || echo "WARN: PIT exited with code $PIT_RC; see the mutation gate in the summary." >&2
+  if [ "$VERIFY_RC" -eq 0 ]; then
+    section "mutation (incremental)"
+    PIT_RC=0
+    mvn -B -ntp -Ppit org.pitest:pitest-maven:mutationCoverage || PIT_RC=$?
+  else
+    echo "Skipping mutation testing: mvn verify failed (rc=$VERIFY_RC)."
+  fi
 fi
 
-# Contract diff if openapi spec is present.
 if [ -f src/main/resources/openapi/openapi.yaml ]; then
   section "openapi contract diff"
-  prev="$(git show "origin/main:src/main/resources/openapi/openapi.yaml" 2>/dev/null || true)"
+  prev="$(git show "origin/main:./src/main/resources/openapi/openapi.yaml" 2>/dev/null || true)"
   if [ -n "$prev" ]; then
-    echo "$prev" > target/openapi-base.yaml
+    printf '%s\n' "$prev" > target/openapi-base.yaml
     if command -v openapi-diff >/dev/null 2>&1; then
       openapi-diff target/openapi-base.yaml src/main/resources/openapi/openapi.yaml --json > target/openapi-diff.json || true
     else
-      echo "WARN: openapi-diff CLI not installed; skipping (run: npm i -g @apidevtools/swagger-cli or use openapitools/openapi-diff docker image)" >&2
+      echo "WARN: openapi-diff CLI not installed; skipping (use the openapitools/openapi-diff docker image)" >&2
     fi
   fi
 fi
 
-# Build the summary JSON. Best-effort parse — layers without reports just emit "skipped".
+# Layers without reports are reported as "skipped".
 parse_surefire() {
   local dir="$1"
   [ -d "$dir" ] || { echo '{"status":"skipped"}'; return; }
-  local total=0 fail=0 err=0 skip=0
+  local total=0 fail=0 err=0 skip=0 t fa er sk f
   while IFS= read -r f; do
     t=$(grep -oE 'tests="[0-9]+"' "$f" | head -n1 | grep -oE '[0-9]+' || echo 0)
     fa=$(grep -oE 'failures="[0-9]+"' "$f" | head -n1 | grep -oE '[0-9]+' || echo 0)
@@ -75,88 +106,89 @@ parse_surefire() {
     total=$((total+t)); fail=$((fail+fa)); err=$((err+er)); skip=$((skip+sk))
   done < <(find "$dir" -name 'TEST-*.xml')
   local status="pass"
-  [ "$fail" -gt 0 ] || [ "$err" -gt 0 ] && status="fail"
+  if [ "$fail" -gt 0 ] || [ "$err" -gt 0 ]; then status="fail"; fi
   printf '{"status":"%s","tests":%d,"failures":%d,"errors":%d,"skipped":%d}' "$status" "$total" "$fail" "$err" "$skip"
 }
 
+# python3 parses the XML because JaCoCo can write the whole report on one line.
 parse_jacoco() {
   local f="target/site/jacoco/jacoco.xml"
   [ -f "$f" ] || { echo '{"status":"skipped"}'; return; }
-  # Use python3 to parse XML properly — JaCoCo 0.8.x can write the entire
-  # report on a single line, which breaks chained grep pipelines.
-  local result
-  result=$(python3 - "$f" <<'PYEOF'
+  python3 - "$f" <<'PYEOF'
 import sys, xml.etree.ElementTree as ET
-tree = ET.parse(sys.argv[1])
-root = tree.getroot()
-# The last <counter type="LINE|BRANCH"> in document order is the report total.
-line_c = [(int(c.get('missed','0')), int(c.get('covered','0')))
-          for c in root.iter('counter') if c.get('type')=='LINE']
-branch_c = [(int(c.get('missed','0')), int(c.get('covered','0')))
-            for c in root.iter('counter') if c.get('type')=='BRANCH']
-lm, lc = line_c[-1] if line_c else (0, 0)
-bm, bc = branch_c[-1] if branch_c else (0, 0)
-lt = lm + lc; bt = bm + bc
-lr = lc / lt if lt > 0 else 0.0
-br = bc / bt if bt > 0 else 0.0
+root = ET.parse(sys.argv[1]).getroot()
+# Report totals are the <counter> elements directly under <report>.
+totals = {c.get('type'): (int(c.get('missed', '0')), int(c.get('covered', '0')))
+          for c in root.findall('counter')}
+lm, lc = totals.get('LINE', (0, 0))
+bm, bc = totals.get('BRANCH', (0, 0))
+lr = lc / (lm + lc) if lm + lc > 0 else 0.0
+br = bc / (bm + bc) if bm + bc > 0 else 1.0  # no branches means nothing to miss
 status = "fail" if lr < 0.90 or br < 0.90 else "pass"
-print('{"status":"' + status + '","line":' + f'{lr:.4f}' + ',"branch":' + f'{br:.4f}' + '}')
+print('{"status":"%s","line":%.4f,"branch":%.4f}' % (status, lr, br))
 PYEOF
-  )
-  echo "$result"
 }
 
 parse_pit() {
   local f="target/pit-reports/mutations.xml"
-  [ -f "$f" ] || { echo '{"status":"skipped"}'; return; }
-  local result
-  result=$(python3 - "$f" <<'PYEOF'
+  if [ -z "$PIT_RC" ]; then echo '{"status":"skipped"}'; return; fi
+  if [ ! -f "$f" ]; then
+    printf '{"status":"fail","exit_code":%d,"reason":"no mutations.xml"}' "$PIT_RC"
+    return
+  fi
+  python3 - "$f" "$PIT_RC" <<'PYEOF'
 import sys, xml.etree.ElementTree as ET
-tree = ET.parse(sys.argv[1])
-root = tree.getroot()
-total = 0; killed = 0; survived = 0; no_cov = 0; timed_out = 0
-for m in root.iter('mutation'):
-    total += 1
-    s = m.get('status', '')
-    if s == 'KILLED':   killed += 1
-    elif s == 'SURVIVED': survived += 1
-    elif s == 'NO_COVERAGE': no_cov += 1
-    elif s == 'TIMED_OUT': timed_out += 1
-detected = killed + timed_out
+root = ET.parse(sys.argv[1]).getroot()
+statuses = [m.get('status', '') for m in root.iter('mutation')]
+total = len(statuses)
+detected = statuses.count('KILLED') + statuses.count('TIMED_OUT')
 kr = detected / total if total > 0 else 0.0
-threshold = 0.75
-status = "pass" if kr >= threshold else "fail"
-print('{"status":"' + status + '","kill_rate":' + f'{kr:.4f}' + ',"killed":' + str(detected) + ',"survived":' + str(survived) + ',"no_coverage":' + str(no_cov) + ',"total":' + str(total) + '}')
+status = "pass" if kr >= 0.75 and sys.argv[2] == "0" else "fail"
+print('{"status":"%s","exit_code":%s,"kill_rate":%.4f,"killed":%d,"survived":%d,"no_coverage":%d,"total":%d}'
+      % (status, sys.argv[2], kr, detected, statuses.count('SURVIVED'), statuses.count('NO_COVERAGE'), total))
 PYEOF
-  )
-  echo "$result"
 }
 
+build_status="pass"
+[ "$VERIFY_RC" -eq 0 ] || build_status="fail"
+build=$(printf '{"status":"%s","exit_code":%d}' "$build_status" "$VERIFY_RC")
 unit=$(parse_surefire target/surefire-reports)
 it=$(parse_surefire target/failsafe-reports)
 cov=$(parse_jacoco)
 pit=$(parse_pit)
 
-cat > "$SUMMARY" <<EOF
-{
-  "started_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "git_sha": "$(git rev-parse --short HEAD 2>/dev/null || echo 'unknown')",
-  "stack": $STACK_JSON,
-  "gates": {
-    "unit":     $unit,
-    "it":       $it,
-    "coverage": $cov,
-    "mutation": $pit
-  }
-}
-EOF
+summary_json="$(jq -n \
+  --arg started "$STARTED_AT" \
+  --arg finished "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --arg sha "$(git rev-parse --short HEAD 2>/dev/null || echo unknown)" \
+  --argjson stack "$STACK_JSON" \
+  --argjson build "$build" --argjson unit "$unit" --argjson it "$it" \
+  --argjson coverage "$cov" --argjson mutation "$pit" '
+  {started_at: $started, finished_at: $finished, git_sha: $sha, stack: $stack,
+   gates: {build: $build, unit: $unit, it: $it, coverage: $coverage, mutation: $mutation}}
+  | .overall = (if any(.gates[]; .status == "fail") then "fail" else "pass" end)')"
+printf '%s\n' "$summary_json" > "$SUMMARY"
 
-if [ "$MODE" = "--report" ]; then
-  cat "$SUMMARY"
-elif [ "$MODE" = "--baseline" ]; then
-  jq '{captured_at: .started_at, git_sha, stack, gates}' "$SUMMARY" > .specs/_baseline.json
-  echo "Wrote .specs/_baseline.json"
-else
-  echo
-  jq '.gates' "$SUMMARY"
-fi
+overall="$(printf '%s' "$summary_json" | jq -r '.overall')"
+
+case "$MODE" in
+  --report)
+    printf '%s\n' "$summary_json" >&3
+    ;;
+  --baseline)
+    # Baselines live at the repo root even when --module was used.
+    baseline_dir="$(cd "$INVOKE_DIR" && git rev-parse --show-toplevel 2>/dev/null || echo "$INVOKE_DIR")/.specs"
+    mkdir -p "$baseline_dir"
+    baseline_json="$(printf '%s' "$summary_json" | jq '{captured_at: .started_at, git_sha, stack, gates, overall}')"
+    printf '%s\n' "$baseline_json" > "$baseline_dir/_baseline.json"
+    printf '%s\n' "$baseline_json" >&3
+    echo "Wrote $baseline_dir/_baseline.json"
+    exit 0
+    ;;
+  *)
+    echo
+    printf '%s' "$summary_json" | jq '{overall, gates}'
+    ;;
+esac
+
+[ "$overall" = "pass" ] || exit 1

@@ -10,7 +10,7 @@ Thanks for your interest in improving the spec-driven development toolkit.
 
 ## Local prerequisites
 
-- `bash`, `git`, `jq`
+- `bash` (3.2+), `git`, `jq`, `python3`
 - `shellcheck` (`brew install shellcheck`)
 - `markdownlint-cli2` (`npm i -g markdownlint-cli2`) and `lychee` (`brew install lychee`) — optional, CI runs them
 - Java 25 + Maven 3.9+ only if you're touching the harness POM fragment or testing the harness end-to-end
