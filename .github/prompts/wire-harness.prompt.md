@@ -11,14 +11,17 @@ model: GPT-5
 **Skills used:** `maven-harness-pom`, `jacoco-coverage-policy`, `pit-mutation-tuning`, `flyway-or-liquibase-detection`, `harness-report-parsing`
 
 ## Purpose
+
 Wire the Maven harness layers (Spotless, Checkstyle, SpotBugs, Surefire/Failsafe split, JaCoCo, PIT, OWASP Dependency-Check) plus the chosen migration tool dependency into a Maven module's `pom.xml`. Runs against a module that has already been classified by `/onboard` so that subsequent `/spec` → `/plan` → `/build` cycles execute against fully gated quality bars from day one.
 
 This command exists because `/onboard` Process step 4 says "add missing harness layers" but only on the POM-and-config surface, while `/build` is strictly TDD and refuses to edit the POM without a `<task-id>` in flight. `/wire-harness` fills that gap.
 
 ## Inputs
+
 None required. Optional argument: a path to a Maven module (default `.`). For polyglot monorepos pass the module directory (e.g. `shoply-api`).
 
 ## Reads
+
 - The target module's `pom.xml`.
 - `.specs/_stack.json` (must exist — produced by `/onboard`).
 - `.specs/_onboarding.md` and `.specs/_known-debt.md` (to know what's already accepted as deferred).
@@ -27,6 +30,7 @@ None required. Optional argument: a path to a Maven module (default `.`). For po
 - `.github/skills/jacoco-coverage-policy/SKILL.md`, `.github/skills/pit-mutation-tuning/SKILL.md`, `.github/skills/flyway-or-liquibase-detection/SKILL.md`.
 
 ## Writes
+
 - `<module>/pom.xml` (plugin and dependency wiring; properties block; profile blocks).
 - `<module>/checkstyle.xml` (starter Google-style config if missing).
 - `<module>/dependency-check-suppressions.xml` (empty suppression file if missing).
@@ -37,6 +41,7 @@ None required. Optional argument: a path to a Maven module (default `.`). For po
 - `.specs/adr/ADR-NNN-*.md` (one ADR per deferred layer that overrides a default in `maven-harness-pom`).
 
 ## Process
+
 1. **Pre-flight.** Refuse if `.specs/_stack.json` is missing (run `/onboard` first). Refuse if `migration == "both"`. If `migration == "none"` and the module has any DB engine, refuse and instruct the user to author the migration-tool ADR first (`/spec` → ADR via `/plan`, or a direct ADR under `spring-architect`).
 2. **Compatibility check.** For each layer, verify the pinned plugin version in `.github/skills/maven-harness-pom/SKILL.md` is compatible with the detected `java_version` and `spring_boot_version`. If a layer is incompatible (e.g. Error Prone on a too-new JDK), **defer it** — do not invent a workaround. Each deferral becomes an ADR in step 6.
 3. **Wire layers.** Edit `<module>/pom.xml` per `.github/skills/maven-harness-pom/SKILL.md`:
@@ -57,6 +62,7 @@ None required. Optional argument: a path to a Maven module (default `.`). For po
 8. **Refresh artifacts.** Re-run `.github/scripts/detect-stack.sh <module>/pom.xml > .specs/_stack.json`. Update `.specs/_known-debt.md` to mark the harness-layers debt resolved (preserve the entry, prepend the resolution note). Update `.specs/_starter-design.md` with the chosen profiles, code style, and test-naming conventions.
 
 ## Refuse if
+
 - `.specs/_stack.json` does not exist (precondition: run `/onboard` first).
 - `migration == "both"` in the stack JSON (fatal; same rule as `/onboard`).
 - `migration == "none"` and the module has a DB engine and no ADR has decided the migration tool.
@@ -65,6 +71,7 @@ None required. Optional argument: a path to a Maven module (default `.`). For po
 - A coverage or mutation threshold would need to be lowered without a `_baseline.json` baseline + an ADR justifying the ratchet.
 
 ## Done when
+
 - `mvn -pl <module> -am verify` is green from a clean checkout (after the one-shot `spotless:apply`).
 - `.github/scripts/harness.sh --module <module> --report` shows every wired layer as `pass` (or `skipped` if it lives in an opt-in profile).
 - `.specs/_baseline.json` exists and reflects the post-wiring run.

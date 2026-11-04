@@ -4,7 +4,7 @@ This folder contains all Claude Code configuration. It is fully self-contained �
 
 ## Structure
 
-```
+```text
 .claude/
 ├── README.md
 ├── settings.json              # global Claude Code settings (permissions, hooks)
@@ -20,6 +20,7 @@ This folder contains all Claude Code configuration. It is fully self-contained �
 Each agent, skill, and command file contains the complete definition (not a thin pointer).
 Cross-IDE parity is maintained: the same prompt across Claude Code, Copilot, and Windsurf
 produces the same artifacts. Corresponding files:
+
 - `.claude/agents/NAME.md` ↔ `.github/chatmodes/NAME.chatmode.md` ↔ `.windsurf/workflows/NAME.md`
 - `.claude/skills/NAME/SKILL.md` ↔ `.github/skills/NAME/SKILL.md` ↔ `.windsurf/skills/NAME/SKILL.md`
 - `.claude/commands/NAME.md` ↔ `.github/prompts/NAME.prompt.md` ↔ `.windsurf/workflows/NAME.md`

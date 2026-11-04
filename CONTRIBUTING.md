@@ -5,14 +5,14 @@ Thanks for your interest in improving the spec-driven development toolkit.
 ## Ground rules
 
 - This repo ships **methodology assets** (skills, prompts, templates, hooks, harness scripts) for three agent surfaces: Claude Code (`.claude/`), GitHub Copilot (`.github/`), and Windsurf (`.windsurf/`). It is not a runtime library.
-- Behavioral changes must land in **all three** platform copies in the same PR. CI enforces parity (see `.github/workflows/ci.yml`).
+- Behavioral changes must land in **all three** platform copies in the same PR. CI enforces parity (see `.github/workflows/toolkit-ci.yml` and `tools/check-parity.sh`).
 - Methodology guardrails in [docs/methodology.md](docs/methodology.md) and [docs/harness-principles.md](docs/harness-principles.md) are the contract. Don't change them silently — open an issue first.
 
 ## Local prerequisites
 
 - `bash`, `git`, `jq`
 - `shellcheck` (`brew install shellcheck`)
-- `markdownlint-cli2` (`npm i -g markdownlint-cli2`) — optional, CI runs it
+- `markdownlint-cli2` (`npm i -g markdownlint-cli2`) and `lychee` (`brew install lychee`) — optional, CI runs them
 - Java 25 + Maven 3.9+ only if you're touching the harness POM fragment or testing the harness end-to-end
 
 ## Repository layout
@@ -23,6 +23,7 @@ See [README.md](README.md#repository-layout). Briefly:
 - `.claude/`, `.github/`, `.windsurf/` — per-platform copies of the same skills, templates, checklists, and the Maven parent-pom fragment.
 - `.github/scripts/` — `harness.sh`, `detect-stack.sh`, `check-new-code-coverage.sh`, `traceability.sh`. Used by all three platforms.
 - `examples/` — worked examples (greenfield, brownfield).
+- `tools/check-parity.sh` and `tests/run.sh` — toolkit maintenance (parity check, hook/script regression tests). Run by CI.
 
 ## Making changes
 
@@ -33,10 +34,11 @@ See [README.md](README.md#repository-layout). Briefly:
 5. Run locally before pushing:
 
    ```bash
-   shellcheck .github/scripts/*.sh .claude/hooks/*.sh
-   markdownlint-cli2 "**/*.md"
-   diff -rq .claude/skills .github/skills
-   diff -rq .claude/skills .windsurf/skills
+   shellcheck -S style .github/scripts/*.sh .claude/hooks/*.sh tools/*.sh tests/*.sh
+   tests/run.sh                 # hook and script regression tests
+   tools/check-parity.sh        # tri-platform parity
+   npx markdownlint-cli2        # config: .markdownlint-cli2.yaml
+   lychee './**/*.md'           # config: lychee.toml
    ```
 
 6. Update [CHANGELOG.md](CHANGELOG.md) under `## [Unreleased]`.

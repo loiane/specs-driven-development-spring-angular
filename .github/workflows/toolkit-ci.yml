@@ -1,0 +1,88 @@
+# CI for the toolkit itself (not for consumer Spring/Angular projects).
+# Consumer projects should delete this file and call .github/scripts/harness.sh instead.
+name: Toolkit CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run shellcheck
+        run: |
+          shellcheck --version
+          shellcheck -S style .github/scripts/*.sh .claude/hooks/*.sh tools/*.sh tests/*.sh
+
+  tests:
+    name: Hook and script tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run tests
+        run: tests/run.sh
+
+  markdownlint:
+    name: Markdown lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Lint markdown
+        # Globs, ignores and rules come from .markdownlint-cli2.yaml and .markdownlint.yaml.
+        run: npx --yes markdownlint-cli2@0.24.0
+
+  link-check:
+    name: Markdown link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # Options come from lychee.toml.
+          args: "--no-progress './**/*.md'"
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  platform-parity:
+    name: Tri-platform parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compare skills, templates, checklists and Maven fragment
+        run: tools/check-parity.sh
+
+  hygiene:
+    name: Repo hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: No .DS_Store
+        run: |
+          if find . -name '.DS_Store' -not -path './.git/*' | grep -q .; then
+            echo "::error::.DS_Store files committed"; exit 1
+          fi
+      - name: Required top-level files
+        run: |
+          set -e
+          for f in LICENSE README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md .gitignore .editorconfig; do
+            test -f "$f" || { echo "::error::missing $f"; exit 1; }
+          done
+      - name: Hooks and scripts are executable
+        run: |
+          set -e
+          for f in .github/scripts/*.sh .claude/hooks/*.sh tools/*.sh tests/*.sh; do
+            test -x "$f" || { echo "::error::$f is not executable (git update-index --chmod=+x)"; exit 1; }
+          done

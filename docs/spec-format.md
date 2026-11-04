@@ -12,7 +12,7 @@ We use a *lite* subset of EARS — five clause shapes, no formal grammar, no too
 
 ## The five shapes
 
-```
+```text
 Ubiquitous:     The system shall <action>.
 Event-driven:   When <trigger>, the system shall <action>.
 State-driven:   While <state>, the system shall <action>.
@@ -34,7 +34,7 @@ Tooling parses specs line by line, so ACs and open questions must use these exac
 | --- | --- | --- |
 | Acceptance criterion | `- AC-001: <EARS sentence>` (one bullet; continuation lines indented) | `.github/scripts/traceability.sh` |
 | Open question | `- Q-001: <question>` under `## Open Questions`, with indented sub-bullets | `.claude/hooks/block-progress-on-open-questions.sh` |
-| Question status | `  - Status: open` · `  - Status: deferred — <rationale>` · `  - Status: resolved <YYYY-MM-DD> — <answer>` | same hook — `deferred`/`resolved` entries do not block |
+| Question status (indented sub-bullet) | `- Status: open` · `- Status: deferred — <rationale>` · `- Status: resolved <YYYY-MM-DD> — <answer>` | same hook — `deferred`/`resolved` entries do not block |
 
 Resolved questions move to `## Resolved Questions`. For backward compatibility the parsers also accept `- **AC-001** — …` and `### AC-001: …`, but new specs should use the canonical form.
 

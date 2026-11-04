@@ -8,6 +8,9 @@ Used by `spec-author` to gate exit from Phase 2.
 - [ ] Goal is one paragraph and describes a user-visible outcome.
 - [ ] Non-goals are present and explicit.
 - [ ] Glossary covers every domain term used in AC.
+- [ ] `## Domain Entities and Relationships` is present.
+- [ ] Entities are described in business terms (no class/table/library leakage).
+- [ ] Relationships include clear cardinality and business meaning.
 
 ## Acceptance criteria
 

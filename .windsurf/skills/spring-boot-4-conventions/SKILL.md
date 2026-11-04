@@ -35,7 +35,7 @@ All classes in the feature's private sub-packages (`model`, `repository`, `servi
 
 The `api/` sub-package is the **only** published surface. Other features depend only on `<feature>.api`.
 
-```
+```text
 com.example.checkout
 ├── giftcard/                    # feature/domain — one package per bounded context
 │   ├── api/                     # published surface: controller, service interfaces, events
@@ -67,7 +67,7 @@ com.example.checkout
 
 Forbidden layouts (do **not** create these at the application root level):
 
-```
+```text
 com.example.checkout
 ├── controller/        ❌ by-layer at root
 ├── service/           ❌ by-layer at root
@@ -80,6 +80,7 @@ The forbidden layouts are **top-level** by-layer packages. Typed sub-packages
 are multiple classes — **inside** a feature/domain package.
 
 Why:
+
 - Features change together; layers don't. By-feature keeps the diff for one
   change inside one package.
 - Typed sub-packages within a feature improve navigation when a bounded context
@@ -89,6 +90,7 @@ Why:
 - It maps 1:1 to the module boundaries enforced by `archunit-rules`.
 
 Cross-feature interaction:
+
 - Other features depend only on `<feature>.api`.
 - Prefer events (`ApplicationEventPublisher`) for fire-and-forget integration.
 - Direct dependencies between features are explicit and asserted by ArchUnit
@@ -139,6 +141,7 @@ public interface GiftCardClient {
   - Declare explicit `@RequestParam` fields (`page`, `size`, sort params).
   - Apply Bean Validation constraints directly (`@PositiveOrZero`, `@Positive`, `@Max(100)`).
   - Construct `PageRequest.of(page, size)` inside the method and pass it to the service.
+
   ```java
   @GetMapping
   FooPageResponse list(
@@ -147,6 +150,7 @@ public interface GiftCardClient {
     return fooService.getPage(PageRequest.of(page, size));
   }
   ```
+
 - **Avoid `ResponseEntity<T>` as a return type** unless varying the HTTP status code at runtime is unavoidable. For the common cases:
   - **Add a response header** (e.g. `ETag`, `Location`) → inject `HttpServletResponse` and call `response.setHeader(...)`, then return the DTO directly.
   - **201 Created with Location** → use `@ResponseStatus(HttpStatus.CREATED)` on the method + set the `Location` header via `HttpServletResponse`.
@@ -221,6 +225,7 @@ public record GiftCardProperties(@NotBlank String baseUrl, @Min(1) int timeoutMs
 Lombok is **forbidden** in new code, including new modules added to brownfield repos.
 
 Why:
+
 - Java 25 records, accessors, and concise constructors cover the legitimate use cases.
 - Lombok is a compile-time bytecode rewriter that interferes with AOT, code coverage, mutation testing, and static analysis.
 - It hides constructor signatures, which makes constructor-injection review harder.
@@ -237,6 +242,7 @@ Replacements:
 | `@EqualsAndHashCode`, `@ToString` | Records get these for free; for non-records, write them or use `Objects.equals` / `Objects.hash` |
 
 Enforcement:
+
 - The `pom.xml` must not declare `org.projectlombok:lombok` as a dependency in new modules.
 - Add an ArchUnit rule (see `archunit-rules` skill): `noClasses().should().dependOnClassesThat().resideInAPackage("lombok..")`.
 - `spring-code-reviewer` flags any Lombok import as a **must-fix**.

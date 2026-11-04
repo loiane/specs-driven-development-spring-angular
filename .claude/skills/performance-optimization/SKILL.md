@@ -35,7 +35,7 @@ Every perf claim is tied to a Service Level Objective. If there is no stated SLO
 
 Template (the user fills the blanks; **never invent the numbers**):
 
-```
+```text
 Endpoint:        <method> <path>
 p50 latency:     ___ ms   (current: ___ ms)
 p95 latency:     ___ ms   (current: ___ ms)
@@ -74,7 +74,7 @@ If the user has not committed to numbers, file a `Q-NNN` in `01-spec.md` or `03-
 
 Size the pool with the formula:
 
-```
+```text
 connections = ((core_count * 2) + effective_spindle_count)
 ```
 
@@ -129,7 +129,7 @@ When reviewing a diff, ask:
 
 Every perf change appends to `05-implementation-log.md`:
 
-```
+```text
 ### T-NNN — perf
 
 Hypothesis: <what we expected to improve>

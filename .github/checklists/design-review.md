@@ -12,6 +12,8 @@ Used by `spring-architect` to gate exit from Phase 3 (`03-design.md` + `04-tasks
 
 ## Data
 
+- [ ] Entity relationship model is present and aligns with `01-spec.md` entities/relationships.
+- [ ] Relationship cardinalities are explicit and consistent across API, data model, and tasks.
 - [ ] Migration tool detected and consistent (Flyway OR Liquibase, never both).
 - [ ] Migrations forward-only with reason, OR reversible.
 - [ ] PII fields identified.

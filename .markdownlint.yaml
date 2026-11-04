@@ -11,3 +11,4 @@ MD046:
   style: fenced
 MD007:
   indent: 2
+MD060: false   # table column style — cosmetic; tables are hand-aligned inconsistently

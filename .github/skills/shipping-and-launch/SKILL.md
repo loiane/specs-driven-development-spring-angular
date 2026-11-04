@@ -91,7 +91,7 @@ If any answer is "we'd figure it out", halt — that's not a rollback plan.
 
 Default rollout shape (override only with an ADR):
 
-```
+```text
 canary (1 instance, ~1%)  →  10%  →  50%  →  100%
    ↳ 30 min observation     ↳ 1 hr   ↳ 4 hr   ↳ steady state
 ```

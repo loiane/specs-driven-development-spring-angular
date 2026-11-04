@@ -223,6 +223,7 @@ See `pit-mutation-tuning` skill. Wire into a `pit` profile to keep default build
 Surefire = unit. Failsafe = integration (Testcontainers).
 
 Naming convention:
+
 - Unit tests: `*Test.java`
 - IT tests: `*IT.java`
 

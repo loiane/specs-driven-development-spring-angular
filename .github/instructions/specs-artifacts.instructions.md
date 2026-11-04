@@ -16,6 +16,7 @@ You are editing a file under `.specs/`. These artifacts ARE the contract between
 ## No-invention
 
 If a section requires information you don't have:
+
 - Add a `Q-NNN` to `## Open Questions`.
 - Halt and ask the user.
 - Do **not** fill the section with a plausible default.

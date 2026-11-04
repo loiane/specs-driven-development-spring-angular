@@ -44,7 +44,7 @@ Do **not** write an ADR for:
 
 ## Naming examples
 
-```
+```text
 .specs/shop-1422-gift-card-checkout/adr/
 ├── 001-use-liquibase-for-migrations.md
 ├── 002-redeem-balance-stored-as-cents-int.md
@@ -62,7 +62,7 @@ Do **not** write an ADR for:
 
 ## Status flow
 
-```
+```text
 proposed → accepted → (later) superseded
                 ↓
               rejected
