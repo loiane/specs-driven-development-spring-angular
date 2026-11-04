@@ -20,6 +20,8 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 - `tools/check-parity.sh` — parity check that normalises legitimate per-platform path differences (the old raw `diff -rq` could never pass).
 - `tests/run.sh` — plain-bash regression tests for the Claude hooks, `traceability.sh`, `detect-stack.sh` and `settings.json` wiring.
 - `.markdownlint-cli2.yaml` and `lychee.toml` so local runs and CI use the same configuration.
+- Windsurf workflows for the five Angular agents (`angular-architect`, `angular-test-engineer`, `angular-implementer`, `angular-validator`, `angular-code-reviewer`) and a `frontend-code` rule, matching Claude Code and Copilot.
+- `tools/check-parity.sh` now also checks that every agent, slash command, and guardrail exists on all three platforms.
 - `harness.sh` and `check-new-code-coverage.sh` tests in `tests/run.sh` (fake `mvn` on `PATH`, single-line JaCoCo report).
 
 ### Removed
@@ -47,6 +49,8 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 - Docs pointed at files and features that don't exist: `shared/skills/...` in the Copilot instructions, `guard-tdd` guardrails, `.windsurf/rules/{skills,agents}/`, `.windsurf/mcp/`, `sync-platforms.sh`, `detect-stack.sh --mcp` and `docs/known-debt.md`. `docs/platform-mapping.md` now describes the actual layout.
 - The natural-language alias hook routed any prompt containing words like "validate" or "code review" (e.g. "how do I validate input?"). Aliases now only fire when the prompt starts with the phrase, and "implement T-NNN" / "build T-NNN" now route to `/build T-NNN` as documented.
 - `block-impl-without-failing-test.sh` did not check `red_at`, and only checked `red_failure_excerpt` in the `red` phase. Every editable phase now requires both, and the guardrail docs on all three platforms describe the same rule (edits are also allowed in `green`, `refactor`, and `simplify`).
+- The TDD hooks only protected Java: Angular production files could be edited without a failing test. `block-impl-without-failing-test.sh` now covers `*.ts`/`*.html`/`*.scss`/`*.css` under `src/` (except `*.spec.ts`), and `enforce-files-in-scope.sh` covers `*.spec.ts`. The Copilot frontend instructions gained the same TDD precondition.
+- Copilot `applyTo` and Windsurf `globs` only matched `src/` at the repo root, so guardrails never applied in multi-module repos or to an Angular app under `frontend/`. They now use a `**/` prefix.
 - `.gitignore` ignored `.specs/<feature>/.tdd-audit.log` through `*.log`; the audit trail is now committed with the other artifacts.
 - `files_in_scope` was never enforced by `block-impl-without-failing-test.sh` / `enforce-files-in-scope.sh`: the jq filter compared each path with itself. Entries now match exactly or as a `/`-anchored path suffix.
 - Platform drift: `.github/` and `.windsurf/` were missing the "Domain Entities and Relationships" sections in the spec/design templates and review checklists; ADR template placeholder styles differed; broken `./.githu.github/scripts/harness.sh` path in the Claude brownfield skill.

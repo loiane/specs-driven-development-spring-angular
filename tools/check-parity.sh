@@ -2,6 +2,10 @@
 # check-parity.sh
 # Verifies that the per-platform copies of shared assets stay in lockstep:
 #   skills/, templates/, checklists/, maven/ under .claude, .github and .windsurf.
+# Also checks that every agent, slash command and guardrail exists on each platform:
+#   agents:     .claude/agents/X.md   .github/chatmodes/X.chatmode.md      .windsurf/workflows/X.md
+#   commands:   .claude/commands/X.md .github/prompts/X.prompt.md          .windsurf/workflows/X.md
+#   guardrails: .github/instructions/X.instructions.md                    .windsurf/rules/X.md
 #
 # Legitimate per-platform differences are normalised before comparing:
 #   - platform directory prefixes (.claude/ .github/ .windsurf/)
@@ -58,10 +62,36 @@ for dir in "${SHARED_DIRS[@]}"; do
   done
 done
 
+# names <dir> <suffix> — basenames of <dir>/*<suffix> with the suffix stripped.
+names() {
+  local f
+  for f in "$1"/*"$2"; do
+    [ -e "$f" ] && basename "$f" "$2"
+  done | sort
+}
+
+# same_names <label> <list-a-label> <list-a> <list-b-label> <list-b>
+same_names() {
+  if ! diff <(printf '%s\n' "$3") <(printf '%s\n' "$5") > "$tmp/names.diff"; then
+    echo "DRIFT: $1 differ between $2 (<) and $4 (>)"
+    sed 's/^/    /' "$tmp/names.diff"
+    drift=1
+  fi
+}
+
+agents="$(names .claude/agents .md)"
+commands="$(names .claude/commands .md)"
+same_names "agents" ".claude/agents" "$agents" ".github/chatmodes" "$(names .github/chatmodes .chatmode.md)"
+same_names "commands" ".claude/commands" "$commands" ".github/prompts" "$(names .github/prompts .prompt.md)"
+same_names "agents + commands" ".claude/{agents,commands}" "$(printf '%s\n%s\n' "$agents" "$commands" | sort)" \
+  ".windsurf/workflows" "$(names .windsurf/workflows .md)"
+same_names "guardrails" ".github/instructions" "$(names .github/instructions .instructions.md)" \
+  ".windsurf/rules" "$(names .windsurf/rules .md)"
+
 if [ "$drift" -ne 0 ]; then
   echo
   echo "Platform copies have drifted. Apply the change to all three of: ${PLATFORMS[*]}."
   exit 1
 fi
 
-echo "Parity OK: ${SHARED_DIRS[*]} match across ${PLATFORMS[*]}."
+echo "Parity OK: ${SHARED_DIRS[*]}, agents, commands and guardrails match across ${PLATFORMS[*]}."

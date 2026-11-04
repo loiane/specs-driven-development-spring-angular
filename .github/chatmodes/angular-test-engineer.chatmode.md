@@ -19,7 +19,7 @@ Write failing frontend tests first (red), then keep frontend test strategy and c
 1. Read task ACs, Test IDs, and `files_in_scope`.
 2. Write the smallest failing frontend test (component/service/route/e2e as appropriate).
 3. Run the targeted test command and verify failure is for missing behavior.
-4. Append red-phase block to `05-implementation-log.md` and update `.tdd-state.json`.
+4. Append red-phase block to `05-implementation-log.md` and update `.tdd-state.json`: set `phase: red`, `red_at`, `red_test_signature`, `red_failure_excerpt` (first lines of the failing `ng test` output), and `files_in_scope`. Production Angular files cannot be edited until these are set.
 5. Update `06-test-plan.md` frontend matrix and traceability entries.
 
 ## Hard rules
