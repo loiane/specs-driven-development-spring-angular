@@ -27,7 +27,7 @@ authoritative_references:
   { "active_task": "T-001", "tasks": { "T-001": { "phase": "red", "red_at": "2026-04-18T10:00:00Z", "red_test_signature": "...", "red_failure_excerpt": "..." } } }
   ```
 
-The `block-impl-without-failing-test` hook reads this file. **No `src/main/**` edit is allowed unless `phase == red` and `red_failure_excerpt` is non-empty.**
+The `block-impl-without-failing-test` hook reads this file. **No `src/main/**` edit is allowed unless the active task has a recorded failing test (`red_at` set and `red_failure_excerpt` non-empty) and its `phase` is `red`, `green`, `refactor`, or `simplify`.**
 
 ### 2. GREEN — minimum production code
 

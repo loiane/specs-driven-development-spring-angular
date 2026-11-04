@@ -55,7 +55,7 @@
    CONFLICT). *Action:* swap to Testcontainers Postgres image matching prod
    minor version. Convert the 12 IT tests in one PR.
 3. **No format/lint/static-analysis layers.** *Action:* copy
-   `shared/maven/parent-pom-fragment.xml` and adopt Spotless + Checkstyle
+   `.claude/maven/parent-pom-fragment.xml` (or the `.github/` / `.windsurf/` copy) and adopt Spotless + Checkstyle
    immediately (low risk); add SpotBugs after the first format-only PR
    merges to keep diff size manageable.
 4. **No coverage enforcement.** *Action:* wire JaCoCo at the **measured

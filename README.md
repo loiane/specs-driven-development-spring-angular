@@ -107,7 +107,7 @@ Once installed, you drive everything from your agent's chat using slash commands
 ```
 
 Classifies the repo, captures a baseline harness run, writes
-`.specs/_onboarding.md` and `docs/known-debt.md`, and adds any missing harness
+`.specs/_onboarding.md` and `.specs/_known-debt.md`, and adds any missing harness
 layers as ratchets (so existing failures don't block you, but no new ones can
 land). See [examples/brownfield/README.md](examples/brownfield/README.md).
 
@@ -185,8 +185,7 @@ tools/ · tests/   toolkit maintenance only (parity check, hook/script tests) �
 Each platform directory currently carries its own copy of the skills,
 templates, checklists, and Maven parent-pom fragment. The CI workflow
 (`.github/workflows/toolkit-ci.yml`) enforces that these copies stay in lockstep via
-`tools/check-parity.sh`. A future `shared/` directory will become the single
-source of truth — see [CONTRIBUTING.md](CONTRIBUTING.md).
+`tools/check-parity.sh` — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Workflow artifacts
 

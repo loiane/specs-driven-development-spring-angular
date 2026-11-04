@@ -26,7 +26,7 @@ At the start of every session, read:
 
 ## Hard rules — phase 4 (TDD)
 
-- Before any edit to `src/main/**`, read `.specs/<active-feature>/.tdd-state.json`. Refuse the edit unless the active task's `phase == "red"` and `red_failure_excerpt` is non-empty AND the file is in `files_in_scope`.
+- Before any edit to `src/main/**`, read `.specs/<active-feature>/.tdd-state.json`. Refuse the edit unless the active task's `phase` is `red`, `green`, `refactor`, or `simplify`, `red_at` is set, `red_failure_excerpt` is non-empty, AND the file is in `files_in_scope`.
 - If you discover the precondition is not met, run the matching workflow first (e.g. invoke `spring-test-engineer` to write the failing test).
 - Never use `-DskipTests`, `-Dpit.skip`, `-Dcheckstyle.skip`, `-Dspotbugs.skip`, `--no-verify`.
 - Never delete a test or remove an assertion.

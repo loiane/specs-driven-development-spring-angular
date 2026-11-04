@@ -30,6 +30,8 @@ npm-debug.log*
 
 # OS / misc
 *.log
+# TDD audit trail is a committed artifact (see docs/artifact-contract.md).
+!.tdd-audit.log
 .env
 .env.*
 !.env.example

@@ -40,7 +40,7 @@ This is enforced by templates (`templates/`), checklists (`checklists/`), and th
 Steps:
 
 1. Ask the user whether the work originates from a Jira ticket, GitHub issue, Linear item, or other tracker.
-2. Detect available MCP servers (`.github/scripts/detect-stack.sh --mcp`) and pull the source ticket via the appropriate MCP (Atlassian/Jira, GitHub `mcp_io_github_*`, Linear, Azure Boards, …). Record the source URL/ID in `## Source`.
+2. Pull the source ticket via whichever matching MCP server the agent has been given (Atlassian/Jira, GitHub `mcp_io_github_*`, Linear, Azure Boards, …). Record the source URL/ID in `## Source`.
 3. Draft `01-spec.md` from the template:
    - `## Source` (ticket link, snapshot)
    - `## Goal` (one paragraph)

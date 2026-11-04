@@ -116,6 +116,16 @@ expect_rc "blocks same file name in a different package" 2 "$rc" "$out"
 write_state red ""
 run_hook block-impl-without-failing-test.sh "$(edit_json "$main_file")"
 expect_rc "blocks red phase with empty excerpt" 2 "$rc" "$out"
+write_state green "AssertionFailedError"
+run_hook block-impl-without-failing-test.sh "$(edit_json "$main_file")"
+expect_rc "allows in-scope src/main edit in green" 0 "$rc" "$out"
+jq '.tasks["T-001"] |= del(.red_at)' "$PROJECT/.specs/f/.tdd-state.json" > "$WORK/state.json" \
+  && mv "$WORK/state.json" "$PROJECT/.specs/f/.tdd-state.json"
+run_hook block-impl-without-failing-test.sh "$(edit_json "$main_file")"
+expect_rc "blocks green phase without red_at" 2 "$rc" "$out"
+write_state refactor ""
+run_hook block-impl-without-failing-test.sh "$(edit_json "$main_file")"
+expect_rc "blocks refactor phase with empty excerpt" 2 "$rc" "$out"
 write_state "done" "AssertionFailedError"
 run_hook block-impl-without-failing-test.sh "$(edit_json "$main_file")"
 expect_rc "blocks when task is done" 2 "$rc" "$out"
@@ -128,12 +138,28 @@ expect_rc "allows .specs edits" 0 "$rc" "$out"
 
 echo "route-natural-language-aliases.sh"
 new_project alias
-run_hook route-natural-language-aliases.sh '{"prompt":"Please review the spec"}'
-if [ "$rc" -eq 0 ] && echo "$out" | jq -e '.hookSpecificOutput.additionalContext | contains("/spec-review")' >/dev/null; then
-  pass "routes 'review the spec' to /spec-review"
-else
-  fail "routes 'review the spec' to /spec-review" "$out"
-fi
+expect_alias() {
+  run_hook route-natural-language-aliases.sh "$(jq -cn --arg p "$1" '{prompt:$p}')"
+  local got
+  got="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.additionalContext // empty' 2>/dev/null)"
+  if [ "$rc" -eq 0 ] && [ "$got" = "${2:+Natural-language alias detected: route to $2.}" ]; then
+    pass "'$1' -> ${2:-no route}"
+  else
+    fail "'$1' -> ${2:-no route}" "rc=$rc out=$out"
+  fi
+}
+expect_alias "Please review the spec" "/spec-review"
+expect_alias "Can you simplify the code in FooService?" "/code-simplify"
+expect_alias "plan this epic" "/epic-plan"
+expect_alias "Let's plan this" "/plan"
+expect_alias "validate" "/validate"
+expect_alias "OK, run the harness" "/validate"
+expect_alias "implement T-004" "/build T-004"
+expect_alias "please build t-012 now" "/build T-012"
+expect_alias "How do I validate the request body?" ""
+expect_alias "Explain the code review rubric" ""
+expect_alias "Why is it important to ship it fast?" ""
+expect_alias "build the project" ""
 
 echo "traceability.sh"
 new_project trace

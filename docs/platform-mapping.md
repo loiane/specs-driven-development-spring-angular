@@ -1,23 +1,35 @@
 # Platform Mapping
 
-How the platform-neutral core in `shared/` is wired into Claude Code, GitHub Copilot, and Windsurf.
+How the same workflow is wired into Claude Code, GitHub Copilot, and Windsurf.
 
-## Single source of truth (planned)
+## One copy per platform, kept in lockstep
 
-Skills, templates, checklists, and prompt fragments are intended to live under a top-level `shared/` directory, with each platform-specific directory (`.claude/`, `.github/`, `.windsurf/`) reduced to a thin wrapper.
+Each platform directory (`.claude/`, `.github/`, `.windsurf/`) carries its own copy of the skills, templates, checklists, and Maven fragments, so consumers can delete the directories for agents they don't use. The scripts in `.github/scripts/` are the one exception: all three platforms call them.
 
-**Current reality:** each platform directory carries its own copy. The CI workflow `.github/workflows/toolkit-ci.yml` enforces parity via `tools/check-parity.sh`, which ignores legitimate per-platform path differences (`.claude/` vs `.github/` vs `.windsurf/`, and command file locations). Promoting `shared/` to a real source of truth is tracked in [CHANGELOG.md](../CHANGELOG.md) under `## [Unreleased]`.
+The CI workflow `.github/workflows/toolkit-ci.yml` enforces parity via `tools/check-parity.sh`, which ignores legitimate per-platform path differences (`.claude/` vs `.github/` vs `.windsurf/`, and command file locations). Any change to a skill, template, or checklist must be made in all three directories.
 
 ## Mapping table
 
-| Concept | Shared core | Claude Code | GitHub Copilot | Windsurf |
-| --- | --- | --- | --- | --- |
-| Skill | `skills/<name>/SKILL.md` | `.claude/skills/<name>/SKILL.md` (symlink/copy) | `.github/instructions/skill-<name>.instructions.md` (path-scoped) | `.windsurf/rules/skills/<name>.md` (model-decision activation) |
-| Agent | (concept) | `.claude/agents/<name>.md` (subagent) | `.github/chatmodes/<name>.chatmode.md` | `.windsurf/rules/agents/<name>.md` + invocation in workflow |
-| Slash command | (concept) | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` | `.windsurf/workflows/<name>.md` |
-| Hook / guardrail | (concept) | `.claude/hooks/<name>.sh` + `.claude/settings.json` | `.github/instructions/guard-<name>.instructions.md` | `.windsurf/rules/guard-<name>.md` (always-on) |
-| Template | `templates/<name>.template.md` | (read directly) | (read directly) | (read directly) |
-| Checklist | `checklists/<name>.md` | (read directly) | (read directly) | (read directly) |
+| Concept | Claude Code | GitHub Copilot | Windsurf |
+| --- | --- | --- | --- |
+| Skill | `.claude/skills/<name>/SKILL.md` | `.github/skills/<name>/SKILL.md` (referenced from instructions, prompts, and chatmodes) | `.windsurf/skills/<name>/SKILL.md` (referenced from rules and workflows) |
+| Agent | `.claude/agents/<name>.md` (subagent) | `.github/chatmodes/<name>.chatmode.md` | `.windsurf/workflows/<name>.md` |
+| Slash command | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` | `.windsurf/workflows/<name>.md` |
+| Hook / guardrail | `.claude/hooks/<name>.sh` + `.claude/settings.json` (enforced) | `.github/instructions/<scope>.instructions.md` (`applyTo:` globs; model-enforced) | `.windsurf/rules/<scope>.md` (`trigger:` always-on or glob; model-enforced) |
+| Template | `.claude/templates/` | `.github/templates/` | `.windsurf/templates/` |
+| Checklist | `.claude/checklists/` | `.github/checklists/` | `.windsurf/checklists/` |
+| Maven fragment | `.claude/maven/` | `.github/maven/` | `.windsurf/maven/` |
+| Harness scripts | `.github/scripts/` | `.github/scripts/` | `.github/scripts/` |
+
+The guardrail files by scope:
+
+| Scope | Copilot | Windsurf |
+| --- | --- | --- |
+| Always on | `always-on.instructions.md` | `always-on.md` |
+| `src/main/**/*.java` | `production-code.instructions.md` | `production-code.md` |
+| `src/test/**/*.java` | `test-code.instructions.md` | `test-code.md` |
+| `.specs/**/*.md` | `specs-artifacts.instructions.md` | `specs-artifacts.md` |
+| Angular sources | `frontend-code.instructions.md` | — (not yet) |
 
 ## Tool/permission model
 
@@ -38,8 +50,8 @@ Where Windsurf has no native pre-tool hook, the equivalent guarantee is encoded 
 ## Example: the `block-impl-without-failing-test` invariant
 
 - **Claude Code:** `.claude/hooks/block-impl-without-failing-test.sh` is a PreToolUse hook on `Edit`/`Write` that reads `.specs/<feature-id>/.tdd-state.json`; refuses the call if no failing test was recorded for the active task.
-- **Copilot:** `.github/instructions/guard-tdd.instructions.md` (applied to `src/main/**`) plus the `spring-implementer` chatmode whose `tools:` excludes `editFiles` until a `red` log entry exists. The `/build` prompt orchestrates phases sequentially.
-- **Windsurf:** `.windsurf/rules/guard-tdd.md` (always-on, scoped to `src/main/**`) + the `/build` workflow which records and verifies `.tdd-state.json` between steps.
+- **Copilot:** `.github/instructions/production-code.instructions.md` (`applyTo: src/main/**/*.java`) tells the model to check `.tdd-state.json` before editing. Copilot has no pre-tool hook, so this is model-enforced; the `/build` prompt orchestrates phases sequentially and `/validate` catches violations afterwards.
+- **Windsurf:** `.windsurf/rules/production-code.md` (`trigger: glob` on `src/main/**/*.java`) carries the same check, and the `/build` workflow records and verifies `.tdd-state.json` between steps.
 
 ## Slash command equivalence
 
@@ -70,11 +82,11 @@ Where Windsurf has no native pre-tool hook, the equivalent guarantee is encoded 
 Issue-tracker integration uses MCP. The core `issue-tracker-ingestion` skill is platform-neutral; each platform wires in MCP servers per its convention:
 
 - **Claude Code:** `.mcp.json` at the workspace root or `~/.claude/mcp.json` (user scope).
-- **Copilot:** MCP servers configured via VS Code settings; the chatmode lists allowed `mcp_*` tools.
-- **Windsurf:** `.windsurf/mcp/` configuration files; the workflow whitelists relevant MCP servers.
+- **Copilot:** `.vscode/mcp.json` in the workspace or VS Code user settings.
+- **Windsurf:** `~/.codeium/windsurf/mcp_config.json`.
 
-The agent runs `.github/scripts/detect-stack.sh --mcp` at the start of `/spec` to enumerate available servers and pick one that matches the user's tracker.
+At the start of `/spec`, the agent asks which tracker the work comes from and uses whichever matching MCP tools it has been given (see the `issue-tracker-ingestion` skill). If none is configured, it asks the user to paste the ticket.
 
 ## Drift control
 
-A `.github/scripts/sync-platforms.sh` (planned) will regenerate the per-platform copies from `shared/` once that directory exists. Until then, any change to a skill, template, or checklist must be propagated manually to all three platform directories. CI (`.github/workflows/toolkit-ci.yml`) runs `tools/check-parity.sh` and fails on any divergence.
+There is no generator: a change to a skill, template, or checklist is made by hand in all three platform directories. CI (`.github/workflows/toolkit-ci.yml`) runs `tools/check-parity.sh` and fails on any divergence; run it locally before pushing.

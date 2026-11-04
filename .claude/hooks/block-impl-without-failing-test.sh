@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # block-impl-without-failing-test.sh
 # Claude Code PreToolUse hook for Edit|Write.
-# Refuses to edit src/main/** unless .specs/<active>/.tdd-state.json shows phase=red
-# with a non-empty red_failure_excerpt and the file is in files_in_scope.
+# Refuses to edit src/main/** unless the active task in .specs/<active>/.tdd-state.json
+# has a recorded failing test (red_at set, red_failure_excerpt non-empty), is in
+# phase red|green|refactor|simplify, and lists the file in files_in_scope.
 #
 # Input: JSON on stdin (Claude Code hook protocol). We read tool_input.file_path.
 # Output: exit 0 to allow, exit 2 + stderr message to block.
@@ -42,14 +43,15 @@ fi
 
 phase="$(jq -r --arg t "$active_task" '.tasks[$t].phase // empty' "$state_file")"
 red_excerpt="$(jq -r --arg t "$active_task" '.tasks[$t].red_failure_excerpt // empty' "$state_file")"
+red_at="$(jq -r --arg t "$active_task" '.tasks[$t].red_at // empty' "$state_file")"
 
 if [ "$phase" != "red" ] && [ "$phase" != "green" ] && [ "$phase" != "refactor" ] && [ "$phase" != "simplify" ]; then
   echo "BLOCKED: task $active_task phase is '$phase'. Cannot edit src/main/** without a failing test (phase=red)." >&2
   exit 2
 fi
 
-if [ "$phase" = "red" ] && [ -z "$red_excerpt" ]; then
-  echo "BLOCKED: task $active_task phase=red but red_failure_excerpt is empty. The failing test was not actually run, or it passed." >&2
+if [ -z "$red_at" ] || [ -z "$red_excerpt" ]; then
+  echo "BLOCKED: task $active_task has no recorded failing test (red_at and red_failure_excerpt must both be set). Run the failing test first and record it in .tdd-state.json." >&2
   exit 2
 fi
 
