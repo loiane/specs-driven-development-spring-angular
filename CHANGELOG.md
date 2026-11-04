@@ -19,8 +19,18 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 ### Removed
 - Committed `.DS_Store` files.
 
+### Changed
+- Canonical spec line format documented in `docs/spec-format.md`: `- AC-NNN: <EARS sentence>` and `- Q-NNN: <question>` with a `Status:` sub-bullet. The `ears-spec-authoring` and `issue-tracker-ingestion` skills and the greenfield example now use it.
+- `traceability.sh` exits `1` when any AC has no linked test and `2` when no ACs are found (previously always `0`).
+- Open questions marked `Status: deferred` or `Status: resolved` no longer block later phases.
+
 ### Fixed
 - README and `docs/platform-mapping.md` references to paths and commands that did not exist on disk.
+- `forbid-skip-flags.sh` never blocked anything: patterns such as `-DskipTests` were parsed by `grep` as options.
+- `.claude/settings.json` hooks used an invalid schema and were never registered. They now use the nested `hooks: [{type, command}]` form, `$CLAUDE_PROJECT_DIR` paths, and also match `MultiEdit`.
+- Blocking hooks now fail closed (exit 2) when `jq` is missing instead of silently allowing the action.
+- `traceability.sh` only recognised `### AC-NNN` headings, ignored `@DisplayName("AC-NNN: …")`, and required bash 4 (`mapfile`).
+- `block-progress-on-open-questions.sh` only recognised `- **Q-NNN**`, so questions written from the spec template never blocked.
 
 ## [0.1.0] — Initial public toolkit
 

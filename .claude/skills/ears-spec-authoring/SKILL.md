@@ -28,6 +28,7 @@ Every AC is one of:
 
 1. **One AC = one condition + one outcome.** Split anything with "and".
 2. **Stable IDs.** Format `AC-NNN`. Never renumber. Insertions get the next number, even if it breaks reading order.
+   Write each AC as one bullet `- AC-NNN: <EARS sentence>` and each open question as `- Q-NNN: <question>` (see `docs/spec-format.md` § Canonical line format). Hooks and `traceability.sh` parse this shape.
 3. **No implementation.** No class names, no DB columns, no library names, no defaults.
 4. **No vague NFRs.** "Fast" → `< 200 ms p95 under 50 RPS` OR demote to `Q-NNN`.
 5. **No silent defaults.** If the user did not say which behavior to pick, write a `Q-NNN`.
@@ -39,10 +40,10 @@ When you would otherwise invent something, write:
 
 ```markdown
 ## Open Questions
-- **Q-001** — Source ticket says "users get a discount" but does not specify whether unauthenticated users qualify. Need decision before AC-005 can be written.
+- Q-001: Source ticket says "users get a discount" but does not specify whether unauthenticated users qualify. Need decision before AC-005 can be written.
 ```
 
-Resolve via direct user answer, then move it to `## Resolved Questions` with the answer and date.
+Resolve via direct user answer, then move it to `## Resolved Questions` with a `- Status: resolved <YYYY-MM-DD> — <answer>` sub-bullet. A question you explicitly defer may stay under `## Open Questions` with `- Status: deferred — <rationale>`; it no longer blocks later phases.
 
 ## Worked example
 
@@ -60,15 +61,15 @@ Good:
 ```markdown
 ## Acceptance Criteria
 
-- **AC-001** — When an authenticated buyer submits a gift card code with their order, the system shall reduce the order total by the card's remaining balance, capped at the order subtotal.
-- **AC-002** — When an authenticated buyer submits a gift card code that has already been fully redeemed, the system shall reject the request and inform the buyer that the card has no remaining balance.
-- **AC-003** — When an authenticated buyer submits a gift card code that does not exist, the system shall reject the request and inform the buyer that the code is unknown.
-- **AC-004** — While a gift card has remaining balance, the system shall allow it to be applied to multiple orders until the balance reaches zero.
+- AC-001: When an authenticated buyer submits a gift card code with their order, the system shall reduce the order total by the card's remaining balance, capped at the order subtotal.
+- AC-002: When an authenticated buyer submits a gift card code that has already been fully redeemed, the system shall reject the request and inform the buyer that the card has no remaining balance.
+- AC-003: When an authenticated buyer submits a gift card code that does not exist, the system shall reject the request and inform the buyer that the code is unknown.
+- AC-004: While a gift card has remaining balance, the system shall allow it to be applied to multiple orders until the balance reaches zero.
 
 ## Open Questions
-- **Q-001** — Should unauthenticated/guest checkouts be allowed to use gift cards? Source ticket only mentions "users".
-- **Q-002** — Maximum number of gift cards per order? Default? (No source guidance.)
-- **Q-003** — What user-facing error format does the buyer see? Banner? Inline field? (UI not specified.)
+- Q-001: Should unauthenticated/guest checkouts be allowed to use gift cards? Source ticket only mentions "users".
+- Q-002: Maximum number of gift cards per order? Default? (No source guidance.)
+- Q-003: What user-facing error format does the buyer see? Banner? Inline field? (UI not specified.)
 ```
 
 ## Self-check before handing off to review

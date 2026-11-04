@@ -54,7 +54,7 @@ If no MCP is configured, fall back to user-provided text. Never invent a ticket.
 If a source field is missing (e.g. no acceptance criteria in the ticket), the agent does **not** fill it from imagination. It writes:
 
 ```markdown
-- **Q-001** — Source ticket has no explicit acceptance criteria. Need user to confirm AC list before proceeding to AC drafting.
+- Q-001: Source ticket has no explicit acceptance criteria. Need user to confirm AC list before proceeding to AC drafting.
 ```
 
 `/spec` then halts and asks the user.

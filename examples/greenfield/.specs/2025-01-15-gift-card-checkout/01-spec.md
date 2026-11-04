@@ -33,46 +33,29 @@ Authenticated customer at the `/checkout` page.
 
 ## Acceptance criteria (EARS)
 
-### AC-001: Apply a valid gift card
-
-**While** an authenticated customer is at checkout with a non-empty cart,
-**when** they submit a valid, active gift card code with sufficient balance,
-**the system shall** reduce the order subtotal by the order subtotal amount
-(card fully covers it) or by the full card balance (card does not fully cover
-it), recompute tax on the reduced subtotal, and persist a `GiftCardRedemption`
-record linking the order id, card id, and amount applied.
-
-### AC-002: Reject an unknown card code
-
-**When** a customer submits a code that does not match any issued gift card,
-**the system shall** reject the submission with HTTP 422 and error code
-`gift_card.unknown` and shall NOT modify the cart total.
-
-### AC-003: Reject an expired card
-
-**When** a customer submits a code matching a card whose `expires_at` is in the
-past, **the system shall** reject the submission with HTTP 422 and error code
-`gift_card.expired`.
-
-### AC-004: Reject a fully redeemed card
-
-**When** a customer submits a code matching a card whose remaining balance is
-zero, **the system shall** reject the submission with HTTP 422 and error code
-`gift_card.depleted`.
-
-### AC-005: Partial redemption
-
-**While** a card has a remaining balance smaller than the order subtotal,
-**when** the redemption succeeds, **the system shall** debit the card by exactly
-the order subtotal and leave the difference as the new remaining balance.
-*(Note: this is the inverse of AC-001's partial path, restated here so the
-remaining-balance accounting has its own dedicated test.)*
-
-### AC-006: Idempotent retry
-
-**When** a customer submits the same gift card code twice with the same
-`Idempotency-Key` header within 24 hours, **the system shall** apply the card
-exactly once and return the same response on the second call.
+- AC-001: While an authenticated customer is at checkout with a non-empty cart,
+  when they submit a valid, active gift card code with sufficient balance, the
+  system shall reduce the order subtotal by the order subtotal amount (card fully
+  covers it) or by the full card balance (card does not fully cover it), recompute
+  tax on the reduced subtotal, and persist a `GiftCardRedemption` record linking
+  the order id, card id, and amount applied.
+- AC-002: When a customer submits a code that does not match any issued gift card,
+  the system shall reject the submission with HTTP 422 and error code
+  `gift_card.unknown` and shall NOT modify the cart total.
+- AC-003: When a customer submits a code matching a card whose `expires_at` is in
+  the past, the system shall reject the submission with HTTP 422 and error code
+  `gift_card.expired`.
+- AC-004: When a customer submits a code matching a card whose remaining balance
+  is zero, the system shall reject the submission with HTTP 422 and error code
+  `gift_card.depleted`.
+- AC-005: While a card has a remaining balance smaller than the order subtotal,
+  when the redemption succeeds, the system shall debit the card by exactly the
+  order subtotal and leave the difference as the new remaining balance.
+  *(Note: this is the inverse of AC-001's partial path, restated here so the
+  remaining-balance accounting has its own dedicated test.)*
+- AC-006: When a customer submits the same gift card code twice with the same
+  `Idempotency-Key` header within 24 hours, the system shall apply the card
+  exactly once and return the same response on the second call.
 
 ## Non-functional requirements
 
@@ -91,8 +74,9 @@ exactly once and return the same response on the second call.
 
 ## Resolved Questions
 
-- **Q-001 (resolved 2025-01-15)**: Should multi-card redemption be supported?
-  → No, deferred to v2 per product. Captured under "Explicitly out of scope".
-- **Q-002 (resolved 2025-01-15)**: What happens to tax when a card brings the
-  subtotal to zero? → Tax is computed on the reduced subtotal, so it becomes 0.
-  Captured in AC-001.
+- Q-001: Should multi-card redemption be supported?
+  - Status: resolved 2025-01-15 — No, deferred to v2 per product. Captured
+    under "Explicitly out of scope".
+- Q-002: What happens to tax when a card brings the subtotal to zero?
+  - Status: resolved 2025-01-15 — Tax is computed on the reduced subtotal, so it
+    becomes 0. Captured in AC-001.
