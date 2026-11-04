@@ -25,17 +25,57 @@
   },
   "hooks": {
     "PreToolUse": [
-      { "matcher": "Edit|Write", "command": ".claude/hooks/block-impl-without-failing-test.sh" },
-      { "matcher": "Edit|Write", "command": ".claude/hooks/enforce-files-in-scope.sh" },
-      { "matcher": "Edit|Write", "command": ".claude/hooks/block-progress-on-open-questions.sh" },
-      { "matcher": "Bash",       "command": ".claude/hooks/forbid-skip-flags.sh" }
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-impl-without-failing-test.sh"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/enforce-files-in-scope.sh"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-progress-on-open-questions.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/forbid-skip-flags.sh"
+          }
+        ]
+      }
     ],
     "PostToolUse": [
-      { "matcher": "Edit|Write", "command": ".claude/hooks/auto-format-touched.sh" },
-      { "matcher": "Edit|Write", "command": ".claude/hooks/log-tdd-state-transition.sh" }
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/auto-format-touched.sh"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/log-tdd-state-transition.sh"
+          }
+        ]
+      }
     ],
     "UserPromptSubmit": [
-      { "command": ".claude/hooks/route-natural-language-aliases.sh" }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/route-natural-language-aliases.sh"
+          }
+        ]
+      }
     ]
   }
 }

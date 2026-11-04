@@ -5,6 +5,12 @@
 
 set -euo pipefail
 
+command -v jq >/dev/null 2>&1 || {
+  echo "BLOCKED: jq is required by .claude/hooks (install jq). Refusing to fail open." >&2
+  exit 2
+}
+cd "${CLAUDE_PROJECT_DIR:-.}"
+
 input="$(cat)"
 cmd="$(echo "$input" | jq -r '.tool_input.command // empty')"
 [ -z "$cmd" ] && exit 0
@@ -27,7 +33,7 @@ i=0
 while [ $i -lt ${#patterns[@]} ]; do
   pat="${patterns[$i]}"
   reason="${patterns[$((i+1))]}"
-  if echo "$cmd" | grep -Eq "$pat"; then
+  if echo "$cmd" | grep -Eq -- "$pat"; then
     echo "BLOCKED: $reason  (matched pattern: $pat)" >&2
     echo "Command: $cmd" >&2
     exit 2

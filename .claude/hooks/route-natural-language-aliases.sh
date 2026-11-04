@@ -7,6 +7,9 @@
 
 set -euo pipefail
 
+command -v jq >/dev/null 2>&1 || exit 0
+cd "${CLAUDE_PROJECT_DIR:-.}"
+
 input="$(cat)"
 prompt="$(echo "$input" | jq -r '.prompt // empty')"
 [ -z "$prompt" ] && exit 0

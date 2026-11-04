@@ -3,7 +3,15 @@
 # Builds the AC-NNN -> tests + code matrix for a feature and writes
 # .specs/<feature>/07a-traceability.md.
 #
-# Usage: scripts/traceability.sh <feature-id>
+# Usage: .github/scripts/traceability.sh <feature-id>
+#
+# AC lines are read from 01-spec.md. The canonical format (docs/spec-format.md) is
+#   - AC-001: When <trigger>, the system shall <action>.
+# Legacy forms `- **AC-001** — …` and `### AC-001: <title>` are also accepted.
+# Tests are linked via @Tag("AC-NNN") or @DisplayName("AC-NNN: …").
+#
+# Exit: 0 = every AC has at least one test, 1 = at least one AC has no tests,
+#       2 = bad input (missing spec, no ACs found).
 
 set -euo pipefail
 
@@ -13,7 +21,7 @@ if [ -z "$FEATURE" ]; then
   exit 2
 fi
 
-SPEC="$(ls .specs/$FEATURE/01-*.md 2>/dev/null | head -n 1)"
+SPEC="$(ls .specs/"$FEATURE"/01-*.md 2>/dev/null | head -n 1 || true)"
 if [ -z "$SPEC" ] || [ ! -f "$SPEC" ]; then
   echo "ERROR: spec not found at .specs/$FEATURE/01-*.md" >&2
   exit 2
@@ -21,9 +29,29 @@ fi
 
 OUT=".specs/$FEATURE/07a-traceability.md"
 
-# Extract AC-NNN headings and titles from the spec.
-mapfile -t acs < <(grep -E '^### AC-[0-9]+' "$SPEC" | sed -E 's/^### (AC-[0-9]+)[[:space:]]*[:.-][[:space:]]*(.*)/\1|\2/')
+# Emit "AC-NNN|title" for each AC, first occurrence only.
+extract_acs() {
+  sed -nE \
+    -e 's/^###[[:space:]]+(AC-[0-9]+)[[:space:]]*(:|\.|—|–|-)?[[:space:]]*(.*)$/\1|\3/p' \
+    -e 's/^[-*][[:space:]]+(\*\*)?(AC-[0-9]+)(\*\*)?[[:space:]]*(:|\.|—|–|-)?[[:space:]]*(.*)$/\2|\5/p' \
+    "$SPEC" | awk -F'|' '!seen[$1]++'
+}
 
+acs="$(extract_acs)"
+if [ -z "$acs" ]; then
+  echo "ERROR: no AC-NNN entries found in $SPEC (expected lines like '- AC-001: When …, the system shall …')" >&2
+  exit 2
+fi
+
+shorten() {
+  local s="${1//|/\\|}"
+  if [ "${#s}" -gt 80 ]; then
+    s="${s:0:77}..."
+  fi
+  printf '%s' "$s"
+}
+
+missing=0
 {
   echo "# Traceability: $FEATURE"
   echo
@@ -31,22 +59,24 @@ mapfile -t acs < <(grep -E '^### AC-[0-9]+' "$SPEC" | sed -E 's/^### (AC-[0-9]+)
   echo
   echo "| AC | Title | Tests | Production code |"
   echo "|----|-------|-------|-----------------|"
-  for entry in "${acs[@]}"; do
-    ac="${entry%%|*}"
-    title="${entry#*|}"
-    # Tests: search for @Tag("AC-NNN") in src/test.
-    tests=$(grep -RIl --include='*.java' "@Tag(\"$ac\")" src/test 2>/dev/null \
-      | sed -E 's|^src/test/java/||; s|\.java$||; s|/|.|g' | tr '\n' ',' | sed 's/,$//')
-    # Code: best-effort — production classes referenced by those tests' imports.
-    test_files=$(grep -RIl --include='*.java' "@Tag(\"$ac\")" src/test 2>/dev/null || true)
+  while IFS='|' read -r ac title; do
+    [ -n "$ac" ] || continue
+    test_files="$(grep -RIlE --include='*.java' \
+      "@(Tag\(\"$ac\"\)|DisplayName\(\"$ac[:\" ])" src/test 2>/dev/null || true)"
+    tests=""
     code=""
     if [ -n "$test_files" ]; then
-      code=$(grep -h -E '^import [a-z]' $test_files 2>/dev/null \
-        | grep -v '^import (java\.|org\.junit|org\.springframework\.test|org\.testcontainers|static )' \
-        | sed -E 's/^import (.+);$/\1/' | sort -u | tr '\n' ',' | sed 's/,$//')
+      tests="$(echo "$test_files" \
+        | sed -E 's|^src/test/java/||; s|\.java$||; s|/|.|g' | tr '\n' ',' | sed 's/,$//')"
+      # Best-effort: production classes referenced by those tests' imports.
+      code="$(echo "$test_files" | tr '\n' '\0' | xargs -0 grep -h -E '^import [a-z]' 2>/dev/null \
+        | grep -v -E '^import (java\.|org\.junit|org\.springframework\.test|org\.testcontainers|static )' \
+        | sed -E 's/^import (.+);$/\1/' | sort -u | tr '\n' ',' | sed 's/,$//' || true)"
+    else
+      missing=$((missing+1))
     fi
-    echo "| $ac | ${title:-(no title)} | ${tests:-_(none)_} | ${code:-_(unknown)_} |"
-  done
+    echo "| $ac | $(shorten "${title:-(no title)}") | ${tests:-_(none)_} | ${code:-_(unknown)_} |"
+  done <<< "$acs"
   echo
   echo "## Notes"
   echo
@@ -55,3 +85,7 @@ mapfile -t acs < <(grep -E '^### AC-[0-9]+' "$SPEC" | sed -E 's/^### (AC-[0-9]+)
 } > "$OUT"
 
 echo "Wrote $OUT"
+if [ "$missing" -gt 0 ]; then
+  echo "FAIL: $missing AC(s) have no linked tests (@Tag(\"AC-NNN\") or @DisplayName(\"AC-NNN: …\"))." >&2
+  exit 1
+fi

@@ -26,9 +26,21 @@ Unwanted:       If <unwanted condition>, then the system shall <mitigation>.
 - IDs are **never reused** even if the AC is removed; deletion leaves a tombstone.
 - Tests reference the AC via either `@DisplayName("AC-007: rejects expired card")` or `@Tag("AC-007")`. The traceability matrix consumes both.
 
+## Canonical line format
+
+Tooling parses specs line by line, so ACs and open questions must use these exact shapes:
+
+| Item | Format | Parsed by |
+| --- | --- | --- |
+| Acceptance criterion | `- AC-001: <EARS sentence>` (one bullet; continuation lines indented) | `.github/scripts/traceability.sh` |
+| Open question | `- Q-001: <question>` under `## Open Questions`, with indented sub-bullets | `.claude/hooks/block-progress-on-open-questions.sh` |
+| Question status | `  - Status: open` · `  - Status: deferred — <rationale>` · `  - Status: resolved <YYYY-MM-DD> — <answer>` | same hook — `deferred`/`resolved` entries do not block |
+
+Resolved questions move to `## Resolved Questions`. For backward compatibility the parsers also accept `- **AC-001** — …` and `### AC-001: …`, but new specs should use the canonical form.
+
 ## Spec template
 
-See [shared/templates/spec.template.md](../shared/templates/spec.template.md). Skeleton:
+See the platform copy of `spec.template.md` (e.g. [.claude/templates/spec.template.md](../.claude/templates/spec.template.md)). Skeleton:
 
 ```markdown
 # Spec: <feature-id> — <short title>
