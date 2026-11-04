@@ -1,0 +1,11 @@
+# markdownlint-cli2 entry point (used locally and in CI). Rules live in .markdownlint.yaml.
+globs:
+  - "**/*.md"
+ignores:
+  - "**/node_modules/**"
+  - "examples/**"
+  # Slide deck: one H1 per slide by design.
+  - "presentation/**"
+  # Vendored upstream Angular skills (Google LLC, MIT) — keep verbatim.
+  - "**/skills/angular-developer/**"
+  - "**/skills/angular-new-app/**"

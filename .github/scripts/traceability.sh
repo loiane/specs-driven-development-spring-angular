@@ -21,7 +21,10 @@ if [ -z "$FEATURE" ]; then
   exit 2
 fi
 
-SPEC="$(ls .specs/"$FEATURE"/01-*.md 2>/dev/null | head -n 1 || true)"
+SPEC=""
+for candidate in .specs/"$FEATURE"/01-*.md; do
+  if [ -f "$candidate" ]; then SPEC="$candidate"; break; fi
+done
 if [ -z "$SPEC" ] || [ ! -f "$SPEC" ]; then
   echo "ERROR: spec not found at .specs/$FEATURE/01-*.md" >&2
   exit 2
@@ -62,7 +65,7 @@ missing=0
   while IFS='|' read -r ac title; do
     [ -n "$ac" ] || continue
     test_files="$(grep -RIlE --include='*.java' \
-      "@(Tag\(\"$ac\"\)|DisplayName\(\"$ac[:\" ])" src/test 2>/dev/null || true)"
+      "@(Tag\(\"$ac\"\)|DisplayName\(\"${ac}[:\" ])" src/test 2>/dev/null || true)"
     tests=""
     code=""
     if [ -n "$test_files" ]; then

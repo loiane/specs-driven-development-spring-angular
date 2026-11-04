@@ -27,6 +27,7 @@ case "$file_path" in
 esac
 
 # Find the active feature: the most recent .specs/<id>/.tdd-state.json by mtime.
+# shellcheck disable=SC2012 # ls -t is needed to pick the most recently modified state file
 state_file="$(ls -t .specs/*/.tdd-state.json 2>/dev/null | head -n 1 || true)"
 if [ -z "$state_file" ] || [ ! -f "$state_file" ]; then
   echo "BLOCKED: no .specs/<feature>/.tdd-state.json found. Run /build <task-id> so the test-engineer writes the failing test first." >&2
@@ -55,7 +56,7 @@ fi
 # Files in scope check
 in_scope="$(jq -r --arg t "$active_task" --arg f "$file_path" '
   .tasks[$t].files_in_scope // []
-  | map(select(. == $f or ($f | endswith(.))))
+  | map(select(. as $s | $s != "" and ($f == $s or ($f | endswith("/" + $s)))))
   | length
 ' "$state_file")"
 

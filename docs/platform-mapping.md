@@ -6,7 +6,7 @@ How the platform-neutral core in `shared/` is wired into Claude Code, GitHub Cop
 
 Skills, templates, checklists, and prompt fragments are intended to live under a top-level `shared/` directory, with each platform-specific directory (`.claude/`, `.github/`, `.windsurf/`) reduced to a thin wrapper.
 
-**Current reality:** each platform directory carries its own copy. The CI workflow `.github/workflows/ci.yml` enforces parity via `diff -rq`. Promoting `shared/` to a real source of truth is tracked in [CHANGELOG.md](../CHANGELOG.md) under `## [Unreleased]`.
+**Current reality:** each platform directory carries its own copy. The CI workflow `.github/workflows/toolkit-ci.yml` enforces parity via `tools/check-parity.sh`, which ignores legitimate per-platform path differences (`.claude/` vs `.github/` vs `.windsurf/`, and command file locations). Promoting `shared/` to a real source of truth is tracked in [CHANGELOG.md](../CHANGELOG.md) under `## [Unreleased]`.
 
 ## Mapping table
 
@@ -77,4 +77,4 @@ The agent runs `.github/scripts/detect-stack.sh --mcp` at the start of `/spec` t
 
 ## Drift control
 
-A `.github/scripts/sync-platforms.sh` (planned) will regenerate the per-platform copies from `shared/` once that directory exists. Until then, any change to a skill, template, or checklist must be propagated manually to all three platform directories. CI (`.github/workflows/ci.yml`) runs `diff -rq` and fails on any divergence.
+A `.github/scripts/sync-platforms.sh` (planned) will regenerate the per-platform copies from `shared/` once that directory exists. Until then, any change to a skill, template, or checklist must be propagated manually to all three platform directories. CI (`.github/workflows/toolkit-ci.yml`) runs `tools/check-parity.sh` and fails on any divergence.

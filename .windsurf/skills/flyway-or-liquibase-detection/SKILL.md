@@ -6,7 +6,7 @@ when_to_use:
   - Phase 4 (Build) — adding the migration script.
   - `/onboard` — recording the detected tool in the design baseline.
 authoritative_references:
-  - https://documentation.red-gate.com/flyway/flyway-cli-and-api
+  - https://documentation.red-gate.com/flyway
   - https://docs.liquibase.com/concepts/changelogs/home.html
 ---
 

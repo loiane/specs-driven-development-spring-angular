@@ -72,14 +72,19 @@ if [ -d "$ROOT_DIR" ] && [ "$ROOT_DIR" != "$MODULE_DIR" ]; then
   done
 fi
 
+db_engines_json=""
+for engine in ${db_engines[@]+"${db_engines[@]}"}; do
+  db_engines_json="${db_engines_json:+$db_engines_json,}\"$engine\""
+done
+
 # Emit
 cat <<EOF
 {
-  "module_path": "${MODULE_DIR#$ROOT_DIR/}",
+  "module_path": "${MODULE_DIR#"$ROOT_DIR"/}",
   "siblings": [$(IFS=,; echo "${siblings[*]:-}")],
   "java_version": "${java_version:-unknown}",
   "spring_boot_version": "${boot_version:-unknown}",
-  "db_engines": [$(printf '"%s",' "${db_engines[@]}" | sed 's/,$//')],
+  "db_engines": [${db_engines_json}],
   "migration": "$migration",
   "test": {
     "junit5": $junit5,

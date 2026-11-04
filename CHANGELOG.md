@@ -9,27 +9,39 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 ## [Unreleased]
 
 ### Added
+
 - `LICENSE` (MIT) at repo root.
 - `.gitignore` covering macOS, IDE, Java/Maven, Node/Angular, and harness artifacts.
 - `.editorconfig` for consistent line endings and indentation.
 - `CONTRIBUTING.md` with parity rules and per-platform change checklist.
 - `SECURITY.md` with disclosure process and consumer hardening guidance.
 - `CHANGELOG.md` (this file).
+- Toolkit CI restored as `.github/workflows/toolkit-ci.yml`: shellcheck, hook/script tests, markdown lint, link check, tri-platform parity, repo hygiene.
+- `tools/check-parity.sh` — parity check that normalises legitimate per-platform path differences (the old raw `diff -rq` could never pass).
+- `tests/run.sh` — plain-bash regression tests for the Claude hooks, `traceability.sh`, `detect-stack.sh` and `settings.json` wiring.
+- `.markdownlint-cli2.yaml` and `lychee.toml` so local runs and CI use the same configuration.
 
 ### Removed
+
 - Committed `.DS_Store` files.
 
 ### Changed
+
 - Canonical spec line format documented in `docs/spec-format.md`: `- AC-NNN: <EARS sentence>` and `- Q-NNN: <question>` with a `Status:` sub-bullet. The `ears-spec-authoring` and `issue-tracker-ingestion` skills and the greenfield example now use it.
 - `traceability.sh` exits `1` when any AC has no linked test and `2` when no ACs are found (previously always `0`).
 - Open questions marked `Status: deferred` or `Status: resolved` no longer block later phases.
 
 ### Fixed
+
 - README and `docs/platform-mapping.md` references to paths and commands that did not exist on disk.
 - `forbid-skip-flags.sh` never blocked anything: patterns such as `-DskipTests` were parsed by `grep` as options.
 - `.claude/settings.json` hooks used an invalid schema and were never registered. They now use the nested `hooks: [{type, command}]` form, `$CLAUDE_PROJECT_DIR` paths, and also match `MultiEdit`.
 - Blocking hooks now fail closed (exit 2) when `jq` is missing instead of silently allowing the action.
 - `traceability.sh` only recognised `### AC-NNN` headings, ignored `@DisplayName("AC-NNN: …")`, and required bash 4 (`mapfile`).
+- `files_in_scope` was never enforced by `block-impl-without-failing-test.sh` / `enforce-files-in-scope.sh`: the jq filter compared each path with itself. Entries now match exactly or as a `/`-anchored path suffix.
+- Platform drift: `.github/` and `.windsurf/` were missing the "Domain Entities and Relationships" sections in the spec/design templates and review checklists; ADR template placeholder styles differed; broken `./.githu.github/scripts/harness.sh` path in the Claude brownfield skill.
+- `detect-stack.sh` emitted `"db_engines": [""]` (and an unbound-variable error on bash 3.2) when no DB driver was found.
+- Dead links to the EARS and Flyway references; markdown lint findings across docs, skills, agents and templates.
 - `block-progress-on-open-questions.sh` only recognised `- **Q-NNN**`, so questions written from the spec template never blocked.
 
 ## [0.1.0] — Initial public toolkit

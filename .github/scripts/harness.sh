@@ -43,7 +43,9 @@ mvn -B -ntp verify
 
 if [ "$(has_layer pit)" = "true" ]; then
   section "mutation (incremental)"
+  PIT_RC=0
   mvn -B -ntp -Ppit org.pitest:pitest-maven:mutationCoverage || PIT_RC=$?
+  [ "$PIT_RC" -eq 0 ] || echo "WARN: PIT exited with code $PIT_RC; see the mutation gate in the summary." >&2
 fi
 
 # Contract diff if openapi spec is present.

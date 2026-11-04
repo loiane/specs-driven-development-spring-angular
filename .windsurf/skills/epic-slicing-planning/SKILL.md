@@ -23,17 +23,19 @@ Reduce planning risk for large features by separating:
 ## Deliverables
 
 1. `03-epic-design.md`:
-- boundaries
-- shared decisions
-- cross-cutting constraints
-- ADR links
-- Epic-level `Q-NNN`
+
+   - boundaries
+   - shared decisions
+   - cross-cutting constraints
+   - ADR links
+   - Epic-level `Q-NNN`
 
 2. `03a-epic-roadmap.md`:
-- vertical slice backlog
-- dependency order
-- milestone intent
-- rollout notes
+
+   - vertical slice backlog
+   - dependency order
+   - milestone intent
+   - rollout notes
 
 ## Slicing rules
 

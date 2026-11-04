@@ -5,7 +5,7 @@ when_to_use:
   - Phase 1 (Specify) — converting a feature request into testable ACs.
   - Anywhere a vague requirement ("must be fast", "should be secure") needs to be made concrete.
 authoritative_references:
-  - https://alistair.cockburn.us/coffee-cups-and-the-EARS-syntax/  (EARS background)
+  - https://alistairmavin.com/ears/  (EARS background, by its author Alistair Mavin)
   - .claude/templates/spec.template.md
   - docs/spec-format.md
 ---

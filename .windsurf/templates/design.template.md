@@ -45,6 +45,14 @@
 
 - `<module>` — public API package: `<...api>`; depends on: `<other modules>`; published events: `<events>`
 
+## Entity Relationship Model
+
+> Map conceptual entities from `01-spec.md` to design-level persistence decisions.
+
+| Entity | Purpose | Key attributes | Relationships (cardinality) | Persistence notes |
+|---|---|---|---|---|
+| `<entity>` | `<business purpose>` | `<attrs>` | `<A 1..* B, A 0..1 C>` | `<aggregate root / ownership / cascade rules>` |
+
 ## OpenAPI Sketch
 
 ```yaml

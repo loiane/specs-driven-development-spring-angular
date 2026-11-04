@@ -24,6 +24,19 @@ Use EARS-lite shapes (see `docs/spec-format.md`). One condition per AC. IDs are 
 - AC-001: <The system shall …> | <When …, the system shall …> | <If …, then the system shall …> | <While …, the system shall …> | <Where …, the system shall …>
 - AC-002: …
 
+## Domain Entities and Relationships
+
+> Conceptual model only (business language, no class/table/library details). If unknown, add `Q-NNN`.
+
+### Entities
+
+- **<Entity name>** — purpose: <what it represents>; key business attributes: <attribute list>
+
+### Relationships
+
+- **<Entity A> 1..* <Entity B>** — meaning: <business rule>
+- **<Entity C> 0..1 <Entity D>** — meaning: <optional association rule>
+
 ## Non-Goals
 
 - <explicitly out of scope>

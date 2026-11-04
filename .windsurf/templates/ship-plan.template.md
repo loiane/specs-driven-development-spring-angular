@@ -96,7 +96,7 @@ For flag-gated changes, "cohort" is the flag's user/tenant slice. Adjust the tab
 
 ## 8. Deploy command (for the user to run)
 
-```
+```text
 <suggested command, e.g. team release-pipeline trigger, kubectl rollout, mvn deploy>
 ```
 

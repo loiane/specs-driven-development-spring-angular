@@ -32,6 +32,7 @@ case "$file_path" in
   *) exit 0 ;;
 esac
 
+# shellcheck disable=SC2012 # ls -t is needed to pick the most recently modified state file
 state_file="$(ls -t .specs/*/.tdd-state.json 2>/dev/null | head -n 1 || true)"
 [ -z "$state_file" ] && exit 0  # no active feature; let it through (e.g. test-plan author)
 
@@ -40,7 +41,7 @@ active_task="$(jq -r '.active_task // empty' "$state_file")"
 
 in_scope="$(jq -r --arg t "$active_task" --arg f "$file_path" '
   .tasks[$t].files_in_scope // []
-  | map(select(. == $f or ($f | endswith(.))))
+  | map(select(. as $s | $s != "" and ($f == $s or ($f | endswith("/" + $s)))))
   | length
 ' "$state_file")"
 

@@ -26,7 +26,7 @@ fragment, it MUST land in all three platform directories in this same PR.
 
 - [ ] `shellcheck` clean (`shellcheck -S style .github/scripts/*.sh .claude/hooks/*.sh`)
 - [ ] Markdown lints (`npx markdownlint-cli2 "**/*.md"`)
-- [ ] Platform parity (`diff -rq .claude/skills .github/skills` etc. — see CONTRIBUTING.md)
+- [ ] Platform parity (`tools/check-parity.sh` — see CONTRIBUTING.md)
 - [ ] [CHANGELOG.md](../CHANGELOG.md) updated under `## [Unreleased]`
 - [ ] If methodology changed: [docs/methodology.md](../docs/methodology.md) updated
 - [ ] If artifact contract changed: [docs/artifact-contract.md](../docs/artifact-contract.md) updated

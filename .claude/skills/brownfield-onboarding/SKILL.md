@@ -29,7 +29,7 @@ Reach a state where `/spec` works on the next feature, the harness runs green (o
 2. **Run the harness once, capture baselines.**
 
    ```bash
-   ./.githu.github/scripts/harness.sh --baseline > .specs/_baseline.json
+   .github/scripts/harness.sh --baseline > .specs/_baseline.json
    ```
 
    Result is committed:

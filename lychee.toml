@@ -1,0 +1,7 @@
+# Link checker config (lychee), used locally and in CI: `lychee './**/*.md'`
+hidden = true
+exclude_loopback = true
+exclude_path = ["node_modules"]
+max_retries = 3
+# GitHub and some docs hosts rate-limit CI runners.
+accept = ["200..=299", "429"]

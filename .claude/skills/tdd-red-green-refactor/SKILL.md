@@ -60,13 +60,14 @@ The `block-impl-without-failing-test` hook reads this file. **No `src/main/**` e
 When `phase` reaches `done`, **STOP**. Do not auto-start the next task.
 
 Surface a stopping report:
+
 - Files changed (`git status`)
 - Tests passing (module suite green)
 - Suggested commit message (e.g., `feat(gift-card): T-001 apply gift card to order`)
 
 Recommend the 3-step follow-up:
 
-```
+```text
 git status               # review what changed
 git commit               # commit the task
 /build <next-task-id>    # start the next task
@@ -88,8 +89,10 @@ Each block in `05-implementation-log.md`:
 **Result:** FAIL (expected)
 **Excerpt:**
 ```
+
 [ERROR] ApplyGiftCardRequestTest.rejectsBlankCode:23 expected ConstraintViolationException but nothing was thrown
-```
+
+```text
 ```
 
 ## What "minimum code" means

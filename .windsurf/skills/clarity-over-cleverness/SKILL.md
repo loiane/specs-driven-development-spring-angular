@@ -127,7 +127,7 @@ return x.value();
 
 The minimum code to pass the test is the right amount of code. A method with no real caller is dead weight — delete it.
 
-**Anti-pattern: "Don't add a method without a real consumer."**
+#### Anti-pattern: "Don't add a method without a real consumer."
 
 Tautological tests (a test that only asserts that a method returns a fixed value) do **not** count as a real consumer. The correct fix is to surface the design gap and test at a real API boundary.
 
@@ -180,6 +180,7 @@ given().post(ENDPOINT_PATH).then().statusCode(409);
 ```
 
 Rules:
+
 - **Threshold is 2**, not 3. Extract on the second occurrence.
 - Name constants with a **domain-meaningful identifier** (e.g., `ENDPOINT_PATH`, `MAX_RETRIES`, `DEFAULT_TIMEOUT_MS`).
 - Place at the **top of the class** using `private static final`.

@@ -82,10 +82,10 @@ chmod +x .github/scripts/*.sh .claude/hooks/*.sh
 ```
 
 > **Note on `.github/`** — if you already have `.github/workflows/`, review
-> `.github/workflows/ci.yml` before copying so it doesn't clobber yours.
-> The shipped `ci.yml` validates **the toolkit itself** (shellcheck, markdown
-> lint, broken links, tri-platform parity). In a Spring consumer project you
-> should **delete it** and add your own workflow that calls
+> `.github/workflows/toolkit-ci.yml` before copying so it doesn't clobber yours.
+> The shipped `toolkit-ci.yml` validates **the toolkit itself** (shellcheck,
+> hook/script tests, markdown lint, broken links, tri-platform parity). In a
+> Spring consumer project you should **delete it** and add your own workflow that calls
 > `./.github/scripts/harness.sh` to run the 10-layer Spring harness.
 
 ### Verify per-platform wiring
@@ -179,12 +179,13 @@ docs/             methodology · harness-principles · spec-format · platform-m
 .github/          chatmodes · prompts · instructions · skills · templates · checklists · maven · scripts · workflows/   (Copilot + CI)
 .windsurf/        rules · workflows · skills · templates · checklists · maven   (Windsurf)
 examples/         greenfield (worked end-to-end specs) · brownfield (onboarding report)
+tools/ · tests/   toolkit maintenance only (parity check, hook/script tests) — not needed in consumer repos
 ```
 
 Each platform directory currently carries its own copy of the skills,
 templates, checklists, and Maven parent-pom fragment. The CI workflow
-(`.github/workflows/ci.yml`) enforces that these copies stay in lockstep via
-`diff -rq` parity checks. A future `shared/` directory will become the single
+(`.github/workflows/toolkit-ci.yml`) enforces that these copies stay in lockstep via
+`tools/check-parity.sh`. A future `shared/` directory will become the single
 source of truth — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Workflow artifacts

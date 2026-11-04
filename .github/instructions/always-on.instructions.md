@@ -49,6 +49,7 @@ You are working in a workspace that uses the spec-driven workflow defined in `do
 ## Spring Boot 4 conventions
 
 Apply `shared/skills/spring-boot-4-conventions/SKILL.md`:
+
 - Constructor injection only (no `@Autowired` on fields).
 - Package by feature/domain, not by layer (top-level packages are bounded contexts with `api/` as published surface; DTOs go in `api/dto/`; domain exceptions go in `api/exception/`; controllers go directly in `api/`; private impl in `model/`, `repository/`, `service/` sub-packages — use typed sub-packages when a feature has multiple classes of the same type; cross-cutting exception handler lives in `shared/exception/`).
 - `@HttpExchange` / `RestClient` for outbound HTTP (no new `RestTemplate`).
@@ -60,6 +61,7 @@ Apply `shared/skills/spring-boot-4-conventions/SKILL.md`:
 ## Frontend conventions (Angular track)
 
 Apply Angular-focused skills when the active task touches frontend files:
+
 - Use standalone components and route-level code splitting where practical.
 - Use typed API clients/contracts; avoid ad-hoc untyped HTTP response handling.
 - Keep component templates accessible (labels, button semantics, keyboard reachability).
