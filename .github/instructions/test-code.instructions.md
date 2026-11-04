@@ -30,4 +30,4 @@ You are editing test code under `src/test/**`.
 - Integration tests: `*IT.java` (Failsafe + Testcontainers).
 - Fixtures live in `src/test/java/.../testsupport/`.
 
-Apply `shared/skills/junit5-testcontainers-patterns/SKILL.md` and `shared/skills/requirements-traceability/SKILL.md`.
+Apply `.github/skills/junit5-testcontainers-patterns/SKILL.md` and `.github/skills/requirements-traceability/SKILL.md`.

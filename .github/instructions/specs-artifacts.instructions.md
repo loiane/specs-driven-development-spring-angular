@@ -31,4 +31,4 @@ You may not edit a higher-numbered artifact (e.g. `04-tasks.md`) while a lower-n
 - Every test in `src/test/**` referenced by a task must use `@Tag("AC-NNN")` and `@DisplayName("AC-NNN: …")`.
 - `07a-traceability.md` enforces zero uncovered ACs and zero orphan tests.
 
-Apply `shared/skills/ears-spec-authoring/SKILL.md`, `shared/skills/spring-task-decomposition/SKILL.md`, `shared/skills/requirements-traceability/SKILL.md`.
+Apply `.github/skills/ears-spec-authoring/SKILL.md`, `.github/skills/spring-task-decomposition/SKILL.md`, `.github/skills/requirements-traceability/SKILL.md`.

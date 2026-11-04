@@ -24,7 +24,7 @@ You are working in a workspace that uses the spec-driven workflow defined in `do
 
 ## Hard rules — phase 4 (build)
 
-- TDD only. **Never** edit `src/main/**` unless `.specs/<active-feature>/.tdd-state.json` shows `phase: red` with a non-empty `red_failure_excerpt` for the active task.
+- TDD only. **Never** edit `src/main/**` unless `.specs/<active-feature>/.tdd-state.json` shows a recorded failing test for the active task (`red_at` set, non-empty `red_failure_excerpt`) and its `phase` is `red`, `green`, `refactor`, or `simplify`.
 - Edit only files listed in the active task's `Files in scope` (in `04-tasks.md`).
 - Never use `-DskipTests`, `-Dpit.skip`, `-Dcheckstyle.skip`, `-Dspotbugs.skip`, `--no-verify`.
 - Never delete a test or remove an assertion.
@@ -48,7 +48,7 @@ You are working in a workspace that uses the spec-driven workflow defined in `do
 
 ## Spring Boot 4 conventions
 
-Apply `shared/skills/spring-boot-4-conventions/SKILL.md`:
+Apply `.github/skills/spring-boot-4-conventions/SKILL.md`:
 
 - Constructor injection only (no `@Autowired` on fields).
 - Package by feature/domain, not by layer (top-level packages are bounded contexts with `api/` as published surface; DTOs go in `api/dto/`; domain exceptions go in `api/exception/`; controllers go directly in `api/`; private impl in `model/`, `repository/`, `service/` sub-packages — use typed sub-packages when a feature has multiple classes of the same type; cross-cutting exception handler lives in `shared/exception/`).
