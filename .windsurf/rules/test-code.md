@@ -1,6 +1,6 @@
 ---
 trigger: glob
-globs: ["src/test/**/*.java"]
+globs: ["**/src/test/**/*.java"]
 description: "Test code rule — JUnit 5, Testcontainers, traceability tagging."
 ---
 

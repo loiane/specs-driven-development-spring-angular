@@ -1,5 +1,5 @@
 ---
-applyTo: "src/main/**/*.java"
+applyTo: "**/src/main/**/*.java"
 description: "Production code guardrails — TDD discipline and Spring Boot 4 conventions."
 ---
 

@@ -127,8 +127,8 @@ git commit                          # YOU run this — the agent never commits
 ```
 
 Repeat `/build T-NNN` for each task in `04-tasks.md`. The agent refuses to edit
-`src/main/**` unless `.specs/<feature-id>/.tdd-state.json` shows a failing test
-for the active task.
+production code (`src/main/**` and Angular sources other than `*.spec.ts`) unless
+`.specs/<feature-id>/.tdd-state.json` shows a failing test for the active task.
 
 For Epic-sized initiatives, run `/epic-plan` after `/spec-review`, then run `/plan`
 to produce slice-level detailed design and tasks from the approved roadmap.

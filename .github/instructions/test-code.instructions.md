@@ -1,5 +1,5 @@
 ---
-applyTo: "src/test/**/*.java"
+applyTo: "**/src/test/**/*.java"
 description: "Test code guardrails — JUnit 5, Testcontainers, traceability tagging."
 ---
 

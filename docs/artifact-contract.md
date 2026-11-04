@@ -69,7 +69,7 @@ Runtime file maintained by `/build` and read by the `block-impl-without-failing-
 }
 ```
 
-A `src/main/**` edit is allowed only when the active task's `phase` is `red`, `green`, `refactor`, or `simplify` AND `red_at` is set AND `red_failure_excerpt` is non-empty AND the file is listed in `files_in_scope`.
+A production-code edit (Java under `src/main/**`, or an Angular `*.ts`/`*.html`/`*.scss`/`*.css` file under `src/` other than `*.spec.ts`) is allowed only when the active task's `phase` is `red`, `green`, `refactor`, or `simplify` AND `red_at` is set AND `red_failure_excerpt` is non-empty AND the file is listed in `files_in_scope`.
 
 Every transition is also appended to `.specs/<feature-id>/.tdd-audit.log` by the `log-tdd-state-transition` hook (Claude Code). Commit it with the other artifacts; it is the record that red came before green.
 

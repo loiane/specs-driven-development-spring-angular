@@ -136,6 +136,33 @@ expect_rc "blocks out-of-scope test edit" 2 "$rc" "$out"
 run_hook enforce-files-in-scope.sh "$(edit_json "$PROJECT/.specs/f/04-tasks.md")"
 expect_rc "allows .specs edits" 0 "$rc" "$out"
 
+echo "TDD hooks on Angular files"
+new_project ng
+mkdir -p "$PROJECT/.specs/f"
+ng_main="$PROJECT/frontend/src/app/cart/cart.component.ts"
+run_hook block-impl-without-failing-test.sh "$(edit_json "$ng_main")"
+expect_rc "blocks Angular component edit without .tdd-state.json" 2 "$rc" "$out"
+jq -n '{active_task: "T-002", tasks: {"T-002": {phase: "red", red_at: "2026-01-01T00:00:00Z",
+  red_failure_excerpt: "Expected 0 to be 1", files_in_scope: ["frontend/src/app/cart/cart.component.ts",
+  "frontend/src/app/cart/cart.component.spec.ts"]}}}' > "$PROJECT/.specs/f/.tdd-state.json"
+run_hook block-impl-without-failing-test.sh "$(edit_json "$ng_main")"
+expect_rc "allows in-scope Angular component edit in red" 0 "$rc" "$out"
+for f in frontend/src/app/cart/cart.component.html frontend/src/app/cart/cart.component.scss \
+         frontend/src/main.ts frontend/src/styles.css; do
+  run_hook block-impl-without-failing-test.sh "$(edit_json "$PROJECT/$f")"
+  expect_rc "blocks out-of-scope $f" 2 "$rc" "$out"
+done
+run_hook block-impl-without-failing-test.sh "$(edit_json "$PROJECT/frontend/src/app/cart/cart.component.spec.ts")"
+expect_rc "production hook ignores *.spec.ts" 0 "$rc" "$out"
+run_hook enforce-files-in-scope.sh "$(edit_json "$PROJECT/frontend/src/app/cart/cart.component.spec.ts")"
+expect_rc "allows in-scope *.spec.ts" 0 "$rc" "$out"
+run_hook enforce-files-in-scope.sh "$(edit_json "$PROJECT/frontend/src/app/other/other.component.spec.ts")"
+expect_rc "blocks out-of-scope *.spec.ts" 2 "$rc" "$out"
+for f in frontend/node_modules/x/src/index.ts frontend/angular.json frontend/package.json; do
+  run_hook block-impl-without-failing-test.sh "$(edit_json "$PROJECT/$f")"
+  expect_rc "ignores $f" 0 "$rc" "$out"
+done
+
 echo "route-natural-language-aliases.sh"
 new_project alias
 expect_alias() {

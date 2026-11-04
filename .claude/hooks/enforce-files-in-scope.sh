@@ -3,10 +3,9 @@
 # Claude PreToolUse Edit|Write hook.
 # Blocks edits outside the active task's files_in_scope, EXCEPT:
 #   - .specs/** is always allowed (artifacts).
-#   - src/test/** is allowed for spring-test-engineer (red step).
 #
-# This is a defense-in-depth alongside block-impl-without-failing-test.sh which
-# already covers src/main/**. This script extends the same check to test files.
+# Covers test files (src/test/** and Angular *.spec.ts). Production code is
+# covered by block-impl-without-failing-test.sh, which also checks files_in_scope.
 
 set -euo pipefail
 
@@ -26,9 +25,10 @@ case "$file_path" in
   */pom.xml|*/checkstyle.xml|*/dependency-check-suppressions.xml) exit 0 ;;
 esac
 
-# Only check src/test/** here (src/main/** handled by sibling hook).
+# Only check test files here (production code is handled by the sibling hook).
 case "$file_path" in
-  */src/test/*) ;;
+  */node_modules/*) exit 0 ;;
+  src/test/*|*/src/test/*|*.spec.ts|*.test.ts) ;;
   *) exit 0 ;;
 esac
 

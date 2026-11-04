@@ -1,6 +1,6 @@
 ---
 trigger: glob
-globs: ["src/main/**/*.java"]
+globs: ["**/src/main/**/*.java"]
 description: "Production code rule — TDD precondition + Spring Boot 4 conventions."
 ---
 

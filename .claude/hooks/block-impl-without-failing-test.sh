@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # block-impl-without-failing-test.sh
 # Claude Code PreToolUse hook for Edit|Write.
-# Refuses to edit src/main/** unless the active task in .specs/<active>/.tdd-state.json
+# Refuses to edit production code -- Java under src/main/** and Angular sources
+# (*.ts, *.html, *.scss, *.css under src/, except *.spec.ts) -- unless the active
+# task in .specs/<active>/.tdd-state.json
 # has a recorded failing test (red_at set, red_failure_excerpt non-empty), is in
 # phase red|green|refactor|simplify, and lists the file in files_in_scope.
 #
@@ -21,9 +23,11 @@ input="$(cat)"
 file_path="$(echo "$input" | jq -r '.tool_input.file_path // .tool_input.path // empty')"
 [ -z "$file_path" ] && exit 0
 
-# Only enforce on src/main/**
+# Only enforce on production code. Test files are handled by enforce-files-in-scope.sh.
 case "$file_path" in
-  */src/main/*) ;;
+  */node_modules/*|*/src/test/*|*.spec.ts|*.test.ts) exit 0 ;;
+  src/main/*|*/src/main/*) ;;
+  src/*.ts|*/src/*.ts|src/*.html|*/src/*.html|src/*.scss|*/src/*.scss|src/*.css|*/src/*.css) ;;
   *) exit 0 ;;
 esac
 
@@ -46,7 +50,7 @@ red_excerpt="$(jq -r --arg t "$active_task" '.tasks[$t].red_failure_excerpt // e
 red_at="$(jq -r --arg t "$active_task" '.tasks[$t].red_at // empty' "$state_file")"
 
 if [ "$phase" != "red" ] && [ "$phase" != "green" ] && [ "$phase" != "refactor" ] && [ "$phase" != "simplify" ]; then
-  echo "BLOCKED: task $active_task phase is '$phase'. Cannot edit src/main/** without a failing test (phase=red)." >&2
+  echo "BLOCKED: task $active_task phase is '$phase'. Cannot edit production code without a failing test (phase=red)." >&2
   exit 2
 fi
 

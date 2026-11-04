@@ -6,7 +6,7 @@ How the same workflow is wired into Claude Code, GitHub Copilot, and Windsurf.
 
 Each platform directory (`.claude/`, `.github/`, `.windsurf/`) carries its own copy of the skills, templates, checklists, and Maven fragments, so consumers can delete the directories for agents they don't use. The scripts in `.github/scripts/` are the one exception: all three platforms call them.
 
-The CI workflow `.github/workflows/toolkit-ci.yml` enforces parity via `tools/check-parity.sh`, which ignores legitimate per-platform path differences (`.claude/` vs `.github/` vs `.windsurf/`, and command file locations). Any change to a skill, template, or checklist must be made in all three directories.
+The CI workflow `.github/workflows/toolkit-ci.yml` enforces parity via `tools/check-parity.sh`, which ignores legitimate per-platform path differences (`.claude/` vs `.github/` vs `.windsurf/`, and command file locations). It also checks that every agent, slash command, and guardrail in the tables below exists on each platform. Any change to a skill, template, or checklist must be made in all three directories.
 
 ## Mapping table
 
@@ -26,10 +26,12 @@ The guardrail files by scope:
 | Scope | Copilot | Windsurf |
 | --- | --- | --- |
 | Always on | `always-on.instructions.md` | `always-on.md` |
-| `src/main/**/*.java` | `production-code.instructions.md` | `production-code.md` |
-| `src/test/**/*.java` | `test-code.instructions.md` | `test-code.md` |
+| `**/src/main/**/*.java` | `production-code.instructions.md` | `production-code.md` |
+| `**/src/test/**/*.java` | `test-code.instructions.md` | `test-code.md` |
 | `.specs/**/*.md` | `specs-artifacts.instructions.md` | `specs-artifacts.md` |
-| Angular sources | `frontend-code.instructions.md` | — (not yet) |
+| `**/src/**/*.{ts,html,scss,css}` (Angular) | `frontend-code.instructions.md` | `frontend-code.md` |
+
+The `**/` prefix makes the guardrails apply in multi-module repos and when the Angular app lives in a subdirectory such as `frontend/`.
 
 ## Tool/permission model
 
@@ -49,9 +51,9 @@ Where Windsurf has no native pre-tool hook, the equivalent guarantee is encoded 
 
 ## Example: the `block-impl-without-failing-test` invariant
 
-- **Claude Code:** `.claude/hooks/block-impl-without-failing-test.sh` is a PreToolUse hook on `Edit`/`Write` that reads `.specs/<feature-id>/.tdd-state.json`; refuses the call if no failing test was recorded for the active task.
-- **Copilot:** `.github/instructions/production-code.instructions.md` (`applyTo: src/main/**/*.java`) tells the model to check `.tdd-state.json` before editing. Copilot has no pre-tool hook, so this is model-enforced; the `/build` prompt orchestrates phases sequentially and `/validate` catches violations afterwards.
-- **Windsurf:** `.windsurf/rules/production-code.md` (`trigger: glob` on `src/main/**/*.java`) carries the same check, and the `/build` workflow records and verifies `.tdd-state.json` between steps.
+- **Claude Code:** `.claude/hooks/block-impl-without-failing-test.sh` is a PreToolUse hook on `Edit`/`Write` that reads `.specs/<feature-id>/.tdd-state.json`; refuses the call if no failing test was recorded for the active task. It covers Java under `src/main/**` and Angular production files (`*.ts`, `*.html`, `*.scss`, `*.css` under `src/`, except `*.spec.ts`); `enforce-files-in-scope.sh` covers `src/test/**` and `*.spec.ts`.
+- **Copilot:** `.github/instructions/production-code.instructions.md` and `frontend-code.instructions.md` tells the model to check `.tdd-state.json` before editing. Copilot has no pre-tool hook, so this is model-enforced; the `/build` prompt orchestrates phases sequentially and `/validate` catches violations afterwards.
+- **Windsurf:** `.windsurf/rules/production-code.md` and `frontend-code.md` (`trigger: glob`) carry the same check, and the `/build` workflow records and verifies `.tdd-state.json` between steps.
 
 ## Slash command equivalence
 
