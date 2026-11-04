@@ -93,7 +93,7 @@ If current coverage is below 90%:
 
 ## "New code at 95%"
 
-The harness computes new-code coverage by intersecting `git diff --unified=0 origin/main...HEAD` ranges with JaCoCo's `<line nr="N" mi="0" ci="3" mb="0" cb="2"/>` entries. Lines where `mi > 0` (missed instructions) AND the line is in the diff range count as uncovered. Threshold: 95%.
+The harness computes new-code coverage by intersecting the lines added or changed since `git merge-base origin/main HEAD` (including uncommitted and untracked files) with JaCoCo's `<line nr="N" mi="0" ci="3" mb="0" cb="2"/>` entries. A diff line with `ci > 0` is covered; one with `ci == 0` is uncovered; a diff line with no `<line>` entry is not executable and is ignored. Threshold: 95% (`NEW_CODE_THRESHOLD`).
 
 This is implemented in `.github/scripts/check-new-code-coverage.sh`.
 

@@ -39,7 +39,7 @@ This toolkit is a **set of files you drop into your repo**, not a package you `n
   - [Claude Code](https://docs.claude.com/en/docs/claude-code) (uses `.claude/`)
   - [GitHub Copilot in VS Code](https://code.visualstudio.com/docs/copilot/overview) with chat enabled (uses `.github/`)
   - [Windsurf](https://windsurf.com/) (uses `.windsurf/`)
-- `bash`, `git`, `jq` on your `PATH` (the harness scripts use them).
+- `bash` (3.2+ is fine), `git`, `jq` and `python3` on your `PATH` (the harness scripts use them).
 
 You only need the directories for the agent(s) you actually use; the others can be deleted. For backend-only projects, Angular tooling is not required (and vice versa).
 

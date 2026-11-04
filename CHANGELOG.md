@@ -20,6 +20,7 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 - `tools/check-parity.sh` — parity check that normalises legitimate per-platform path differences (the old raw `diff -rq` could never pass).
 - `tests/run.sh` — plain-bash regression tests for the Claude hooks, `traceability.sh`, `detect-stack.sh` and `settings.json` wiring.
 - `.markdownlint-cli2.yaml` and `lychee.toml` so local runs and CI use the same configuration.
+- `harness.sh` and `check-new-code-coverage.sh` tests in `tests/run.sh` (fake `mvn` on `PATH`, single-line JaCoCo report).
 
 ### Removed
 
@@ -38,6 +39,11 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 - `.claude/settings.json` hooks used an invalid schema and were never registered. They now use the nested `hooks: [{type, command}]` form, `$CLAUDE_PROJECT_DIR` paths, and also match `MultiEdit`.
 - Blocking hooks now fail closed (exit 2) when `jq` is missing instead of silently allowing the action.
 - `traceability.sh` only recognised `### AC-NNN` headings, ignored `@DisplayName("AC-NNN: …")`, and required bash 4 (`mapfile`).
+- `harness.sh` always exited 0, even when coverage or mutation gates failed; it now exits 1 on any failed gate (2 on missing prerequisites) and adds `build`, `finished_at` and `overall` to the summary. `--baseline` still exits 0.
+- `harness.sh` aborted before writing the summary when `mvn verify` failed, so the validator had nothing to read. The build result is now a gate and the summary is always written; PIT is skipped after a failed build.
+- `harness.sh --report > file` and `--baseline > .specs/_baseline.json` (as documented in the commands and agents) captured Maven's log instead of JSON. Build output now goes to stderr in those modes, and `--baseline` writes to the repo root's `.specs/` even with `--module`.
+- `harness.sh` coverage summary now reads JaCoCo's report-level totals instead of the last counter in the file, and a project with no branches no longer fails the branch threshold.
+- `check-new-code-coverage.sh` failed on macOS (`mapfile`, gawk-only `match()`), could not parse single-line JaCoCo reports, counted comments and blank lines as uncovered, ignored untracked files, and diffed against the tip of `origin/main` instead of the merge base. Rewritten for bash 3.2 + BSD awk with `python3` for the XML.
 - `files_in_scope` was never enforced by `block-impl-without-failing-test.sh` / `enforce-files-in-scope.sh`: the jq filter compared each path with itself. Entries now match exactly or as a `/`-anchored path suffix.
 - Platform drift: `.github/` and `.windsurf/` were missing the "Domain Entities and Relationships" sections in the spec/design templates and review checklists; ADR template placeholder styles differed; broken `./.githu.github/scripts/harness.sh` path in the Claude brownfield skill.
 - `detect-stack.sh` emitted `"db_engines": [""]` (and an unbound-variable error on bash 3.2) when no DB driver was found.

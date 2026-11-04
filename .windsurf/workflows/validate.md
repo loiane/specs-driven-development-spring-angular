@@ -39,8 +39,8 @@ Run the full 10-layer harness, parse the output, and write `07-validation-report
 
 ## Process
 
-1. Run `.github/scripts/harness.sh --report > /dev/null` (writes `target/harness-summary.json`).
-2. Run `.github/scripts/check-new-code-coverage.sh` (must be ≥ 95% on changed lines).
+1. Run `.github/scripts/harness.sh --report > /dev/null` (writes `target/harness-summary.json`). Exit code 1 means a gate failed — the summary is still written, so keep going and report the failure. Exit code 2 means a prerequisite is missing; stop and report it.
+2. Run `.github/scripts/check-new-code-coverage.sh` (must be ≥ 95% of the executable lines added or changed since the merge base with `origin/main`, including uncommitted and untracked files).
 3. Run `.github/scripts/traceability.sh <feature-id>`. Any AC with zero tests = FAIL.
 4. Aggregate the 10 gates plus the new-code-coverage and traceability checks. Verdict is `PASS` only if every gate is `pass` (mutation may be `warn` if explicitly justified in the report).
 5. Write `07-validation-report.md` with: verdict, gate table, top failing items, links to artifacts, recommended next action.

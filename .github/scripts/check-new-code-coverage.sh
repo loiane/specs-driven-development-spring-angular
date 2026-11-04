@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
 # check-new-code-coverage.sh
-# Computes coverage on lines changed in the working tree vs origin/main and fails
-# if the new-code coverage ratio is below the configured threshold (default 0.95).
+# Computes line coverage on the Java lines added or changed since the merge base
+# with BASE_REF (default origin/main), including uncommitted and untracked files,
+# and fails if the ratio is below NEW_CODE_THRESHOLD (default 0.95).
+# Only executable lines (lines JaCoCo reports on) count; comments, blank lines
+# and imports are ignored.
+#
+# Run from the Maven module directory (the one containing target/).
 # Inputs:
-#   target/site/jacoco/jacoco.xml  (line-level coverage report)
-#   git diff against ${BASE_REF:-origin/main}
+#   target/site/jacoco/jacoco.xml
+#   git diff against $(git merge-base "${BASE_REF:-origin/main}" HEAD)
 # Output:
-#   target/new-code-coverage.json
+#   target/new-code-coverage.json (also printed to stdout)
 # Exit:
-#   0 = pass, 1 = below threshold, 2 = missing inputs
+#   0 = pass, 1 = below threshold, 2 = missing inputs or prerequisites
+#
+# Requires: bash 3.2+, git, python3.
 
 set -euo pipefail
 
@@ -17,68 +24,75 @@ BASE_REF="${BASE_REF:-origin/main}"
 JACOCO_XML="target/site/jacoco/jacoco.xml"
 OUT="target/new-code-coverage.json"
 
+command -v python3 >/dev/null 2>&1 || { echo "ERROR: python3 is required but not on PATH." >&2; exit 2; }
+
 if [ ! -f "$JACOCO_XML" ]; then
   echo "ERROR: $JACOCO_XML not found. Run mvn verify first." >&2
   exit 2
 fi
 
-# Get changed Java files in src/main and the line ranges added.
-mapfile -t changed_files < <(git diff --name-only "$BASE_REF" -- 'src/main/**/*.java' 2>/dev/null || true)
-if [ "${#changed_files[@]}" -eq 0 ]; then
-  echo '{"status":"pass","reason":"no Java changes in src/main","ratio":1.0,"threshold":'"$THRESHOLD"'}' | tee "$OUT"
-  exit 0
+if ! BASE="$(git merge-base "$BASE_REF" HEAD 2>/dev/null)"; then
+  echo "ERROR: cannot find a merge base with '$BASE_REF'. Fetch it or set BASE_REF." >&2
+  exit 2
 fi
 
-# Build a mapping file -> set of added/changed line numbers.
-total_new=0
-covered_new=0
-
-for f in "${changed_files[@]}"; do
-  # Added/changed line numbers from unified diff (RHS).
-  mapfile -t lines < <(git diff -U0 "$BASE_REF" -- "$f" \
-    | awk '/^@@/ { match($0,/\+([0-9]+)(,([0-9]+))?/,a); start=a[1]+0; len=(a[3]==""?1:a[3]+0); for(i=0;i<len;i++) print start+i }')
-
-  [ "${#lines[@]}" -eq 0 ] && continue
-
-  # Class path inside jacoco.xml uses the source file relative path; query each line.
-  src_rel="$(echo "$f" | sed -E 's|^src/main/java/||')"
-  src_pkg="$(dirname "$src_rel" | tr '/' '.')"
-  src_name="$(basename "$src_rel")"
-
-  for ln in "${lines[@]}"; do
-    total_new=$((total_new+1))
-    # Find <line nr="ln" mi="..." ci="..."/> within the matching <sourcefile name="X.java"> under the right package.
-    hit=$(awk -v pkg="$src_pkg" -v name="$src_name" -v ln="$ln" '
-      /<package name=/ { match($0,/name="([^"]+)"/,a); cur_pkg=a[1]; gsub("/",".",cur_pkg) }
-      /<sourcefile name=/ { match($0,/name="([^"]+)"/,a); cur_file=a[1]; in_file = (cur_pkg==pkg && cur_file==name) }
-      in_file && /<line nr=/ {
-        match($0,/nr="([0-9]+)"/,a); n=a[1]+0
-        if (n==ln) {
-          match($0,/ci="([0-9]+)"/,c); ci=c[1]+0
-          print (ci>0 ? "1" : "0"); exit
-        }
-      }
-    ' "$JACOCO_XML")
-    [ "$hit" = "1" ] && covered_new=$((covered_new+1))
-  done
-done
-
-ratio="0"
-[ "$total_new" -gt 0 ] && ratio=$(awk "BEGIN{printf \"%.4f\", $covered_new/$total_new}")
-
-status="pass"
-awk "BEGIN{exit !($ratio < $THRESHOLD)}" && status="fail"
-
-cat > "$OUT" <<EOF
-{
-  "status": "$status",
-  "ratio": $ratio,
-  "covered_new_lines": $covered_new,
-  "total_new_lines": $total_new,
-  "threshold": $THRESHOLD,
-  "base_ref": "$BASE_REF"
+# One "<path relative to cwd>:<line>" per added or changed line.
+changed_lines() {
+  local f
+  git diff --relative --name-only --diff-filter=AMR "$BASE" -- 'src/main/java/*.java' |
+    while IFS= read -r f; do
+      git diff --relative -U0 "$BASE" -- "$f" | awk -v file="$f" '
+        /^@@/ {
+          split($3, rhs, ",")          # $3 is "+start[,count]"
+          start = substr(rhs[1], 2) + 0
+          count = (rhs[2] == "" ? 1 : rhs[2] + 0)
+          for (i = 0; i < count; i++) print file ":" (start + i)
+        }'
+    done
+  # Untracked files are entirely new code.
+  git ls-files --others --exclude-standard -- 'src/main/java/*.java' |
+    while IFS= read -r f; do
+      awk -v file="$f" '{ print file ":" NR }' "$f"
+    done
 }
-EOF
 
-cat "$OUT"
-[ "$status" = "pass" ] || exit 1
+mkdir -p target
+changed_lines | python3 -c '
+import json, sys, xml.etree.ElementTree as ET
+
+jacoco, threshold, base_ref, out = sys.argv[1], float(sys.argv[2]), sys.argv[3], sys.argv[4]
+
+# (package/path/File.java) -> {line number: covered?} for executable lines only.
+lines = {}
+for pkg in ET.parse(jacoco).getroot().iter("package"):
+    for src in pkg.findall("sourcefile"):
+        key = pkg.get("name") + "/" + src.get("name")
+        lines[key] = {int(l.get("nr")): int(l.get("ci", "0")) > 0 for l in src.findall("line")}
+
+total = covered = 0
+for entry in sys.stdin:
+    path, _, nr = entry.strip().rpartition(":")
+    rel = path.split("src/main/java/", 1)[-1]
+    hit = lines.get(rel, {}).get(int(nr))
+    if hit is None:
+        continue  # not an executable line
+    total += 1
+    covered += hit
+
+ratio = covered / total if total else 1.0
+result = {
+    "status": "pass" if ratio >= threshold else "fail",
+    "ratio": round(ratio, 4),
+    "covered_new_lines": covered,
+    "total_new_lines": total,
+    "threshold": threshold,
+    "base_ref": base_ref,
+}
+if total == 0:
+    result["reason"] = "no new executable lines in src/main/java"
+with open(out, "w") as f:
+    json.dump(result, f, indent=2)
+    f.write("\n")
+print(json.dumps(result, indent=2))
+sys.exit(0 if result["status"] == "pass" else 1)
+' "$JACOCO_XML" "$THRESHOLD" "$BASE_REF" "$OUT"
