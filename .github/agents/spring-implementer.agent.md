@@ -1,7 +1,7 @@
 ---
+name: spring-implementer
 description: "Phase 4 (green/refactor/simplify) — minimum production code to pass the failing test, then refactor."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `spring-implementer`
 

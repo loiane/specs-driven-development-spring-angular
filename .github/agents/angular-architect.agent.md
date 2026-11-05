@@ -1,7 +1,7 @@
 ---
+name: angular-architect
 description: "Phase 3 — design the Angular feature, decompose into frontend TDD-shaped tasks."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `angular-architect`
 

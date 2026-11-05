@@ -1,7 +1,7 @@
 ---
+name: angular-implementer
 description: "Phase 4 (green/refactor/simplify) — minimum Angular production code to pass the failing test, then refactor and simplify."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `angular-implementer`
 

@@ -1,7 +1,7 @@
 ---
+name: spring-onboarding
 description: "Bootstrap an existing Spring codebase into the spec-driven workflow."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `spring-onboarding`
 

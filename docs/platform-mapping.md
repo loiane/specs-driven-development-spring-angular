@@ -12,8 +12,8 @@ The CI workflow `.github/workflows/toolkit-ci.yml` enforces parity via `tools/ch
 
 | Concept | Claude Code | GitHub Copilot | Windsurf |
 | --- | --- | --- | --- |
-| Skill | `.claude/skills/<name>/SKILL.md` | `.github/skills/<name>/SKILL.md` (referenced from instructions, prompts, and chatmodes) | `.windsurf/skills/<name>/SKILL.md` (referenced from rules and workflows) |
-| Agent | `.claude/agents/<name>.md` (subagent) | `.github/chatmodes/<name>.chatmode.md` | `.windsurf/workflows/<name>.md` |
+| Skill | `.claude/skills/<name>/SKILL.md` | `.github/skills/<name>/SKILL.md` (referenced from instructions, prompts, and agents) | `.windsurf/skills/<name>/SKILL.md` (referenced from rules and workflows) |
+| Agent | `.claude/agents/<name>.md` (subagent) | `.github/agents/<name>.agent.md` (custom agent) | `.windsurf/workflows/<name>.md` |
 | Slash command | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` | `.windsurf/workflows/<name>.md` |
 | Hook / guardrail | `.claude/hooks/<name>.sh` + `.claude/settings.json` (enforced) | `.github/instructions/<scope>.instructions.md` (`applyTo:` globs; model-enforced) | `.windsurf/rules/<scope>.md` (`trigger:` always-on or glob; model-enforced) |
 | Template | `.claude/templates/` | `.github/templates/` | `.windsurf/templates/` |
@@ -42,7 +42,7 @@ Each agent has a strict permission boundary. The mechanism differs per platform:
 | Allowed file globs | `allowed-tools` + hook diff-check | `tools` frontmatter + path-scoped instructions | rule frontmatter `globs:` + workflow scope |
 | Forbidden actions | PreToolUse hook | instruction file + `tools` allowlist | always-on rule + workflow validation step |
 | Required artifact present | PreToolUse hook | instruction (model-enforced) + workflow check | rule check at workflow entry |
-| Output-only file | hook on `Write` tool | instruction + chatmode `tools` excludes `editFiles` for prod paths | rule + workflow output validation |
+| Output-only file | hook on `Write` tool | instruction + agent `tools` allowlist | rule + workflow output validation |
 
 Where Windsurf has no native pre-tool hook, the equivalent guarantee is encoded as:
 

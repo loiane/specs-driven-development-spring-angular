@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /validate — see .github/prompts/validate.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /validate
 
 **Phase:** 5 — validate (run the harness)
-**Owning agent:** `.github/chatmodes/spring-validator.chatmode.md`
+**Owning agent:** `.github/agents/spring-validator.agent.md`
 **Skills used:** `harness-report-parsing`, `jacoco-coverage-policy`, `pit-mutation-tuning`, `requirements-traceability`, `archunit-rules`
 
 ## Stack routing

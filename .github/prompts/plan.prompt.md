@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /plan — see .github/prompts/plan.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /plan
 
 **Phase:** 3 — plan
-**Owning agent:** `.github/chatmodes/spring-architect.chatmode.md`
+**Owning agent:** `.github/agents/spring-architect.agent.md`
 **Skills used:** `epic-slicing-planning`, `spring-task-decomposition`, `spring-boot-4-conventions`, `openapi-contract-first`, `flyway-or-liquibase-detection`, `archunit-rules`, `adr-authoring`, `performance-optimization`
 
 ## Stack routing

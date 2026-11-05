@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /test — see .github/prompts/test.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /test
 
 **Phase:** 4 (meta) — test plan + targeted test authoring
-**Owning agent:** `.github/chatmodes/spring-test-engineer.chatmode.md`
+**Owning agent:** `.github/agents/spring-test-engineer.agent.md`
 **Skills used:** `junit5-testcontainers-patterns`, `requirements-traceability`, `pit-mutation-tuning`, `archunit-rules`
 
 ## Purpose

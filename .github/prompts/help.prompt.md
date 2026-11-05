@@ -1,8 +1,6 @@
 ---
-mode: agent
+agent: agent
 description: Run /help — see .github/prompts/help.prompt.md for the authoritative spec.
-
-
 ---
 # /help
 

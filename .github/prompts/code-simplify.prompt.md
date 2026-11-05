@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /code-simplify — see .github/prompts/code-simplify.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /code-simplify
 
 **Phase:** 6 (meta) — clarity sweep
-**Owning agent:** `.github/chatmodes/spring-code-reviewer.chatmode.md`
+**Owning agent:** `.github/agents/spring-code-reviewer.agent.md`
 **Skills used:** `clarity-over-cleverness`, `tdd-red-green-refactor`
 
 ## Purpose

@@ -6,7 +6,7 @@ The toolkit organizes feature delivery into **seven phases**. Each phase has:
 - a numbered **markdown artifact** stored under `.specs/<feature-id>/`,
 - an **entry contract** (what must already exist),
 - an **exit contract** (what must be true to advance),
-- and a **gate** that is enforced by hooks / rules / chatmode tool allowlists.
+- and a **gate** that is enforced by hooks / rules / agent tool allowlists.
 
 ```text
 1. Specify  →  2. Review specs  →  3. Plan (design + tasks)  →

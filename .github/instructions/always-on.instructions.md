@@ -5,7 +5,7 @@ description: "Always-on guardrails for spec-driven Spring + Angular development.
 
 # Spec-driven Spring + Angular — always-on guardrails
 
-You are working in a workspace that uses the spec-driven workflow defined in `docs/methodology.md`. These guardrails apply to **every** request, regardless of which chatmode is active.
+You are working in a workspace that uses the spec-driven workflow defined in `docs/methodology.md`. These guardrails apply to **every** request, regardless of which agent is active.
 
 ## Read these on every session
 

@@ -1,7 +1,7 @@
 ---
+name: spring-architect
 description: "Phase 3 — design the Spring Boot 4 feature, decompose into TDD-shaped tasks, write ADRs."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `spring-architect`
 

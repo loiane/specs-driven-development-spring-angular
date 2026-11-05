@@ -53,7 +53,7 @@ A skill is a single `SKILL.md` (plus optional `references/`) with the structure 
    - `.github/skills/<name>/SKILL.md`
    - `.windsurf/skills/<name>/SKILL.md`
 2. Reference it from the agent(s) and command(s) that need it.
-3. Add it to the skill index in the relevant chatmode/agent files.
+3. Add it to the skill index in the relevant agent files (`.claude/agents/`, `.github/agents/`, `.windsurf/workflows/`).
 
 ## Adding a new slash command
 

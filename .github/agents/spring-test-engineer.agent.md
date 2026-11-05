@@ -1,7 +1,7 @@
 ---
+name: spring-test-engineer
 description: "Phase 4 (red step) and Phase 5 — write the failing test; own cross-cutting test concerns."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `spring-test-engineer`
 

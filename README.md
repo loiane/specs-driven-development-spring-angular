@@ -93,7 +93,7 @@ chmod +x .github/scripts/*.sh .claude/hooks/*.sh
 | Platform | Smoke test |
 | --- | --- |
 | Claude Code | Open the repo, run `/help` — you should see the command catalog. |
-| Copilot | Open Copilot Chat, type `/spec` — you should see the chat-mode prompt from `.github/chatmodes/`. |
+| Copilot | Open Copilot Chat, type `/spec` — you should see the prompt from `.github/prompts/`; the role agents from `.github/agents/` appear in the agent dropdown. |
 | Windsurf | Open Cascade, type `/spec` — Windsurf loads the workflow from `.windsurf/workflows/`. |
 
 ## Use
@@ -176,7 +176,7 @@ The same gates the agent runs are reachable from a normal terminal:
 ```text
 docs/             methodology · harness-principles · spec-format · platform-mapping · artifact-contract
 .claude/          agents · skills · commands · hooks · templates · checklists · maven · settings.json   (Claude Code)
-.github/          chatmodes · prompts · instructions · skills · templates · checklists · maven · scripts · workflows/   (Copilot + CI)
+.github/          agents · prompts · instructions · skills · templates · checklists · maven · scripts · workflows/   (Copilot + CI)
 .windsurf/        rules · workflows · skills · templates · checklists · maven   (Windsurf)
 examples/         greenfield (worked end-to-end specs) · brownfield (onboarding report)
 tools/ · tests/   toolkit maintenance only (parity check, hook/script tests) — not needed in consumer repos

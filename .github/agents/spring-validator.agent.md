@@ -1,7 +1,7 @@
 ---
+name: spring-validator
 description: "Phase 6 — run the harness, build the traceability matrix, emit a deterministic verdict."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `spring-validator`
 

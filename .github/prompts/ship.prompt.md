@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /ship — see .github/prompts/ship.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /ship
 
 **Phase:** 8 — ship (post-commit, pre-deploy hygiene)
-**Owning agent:** `.github/chatmodes/spring-code-reviewer.chatmode.md` (reused; no new persona)
+**Owning agent:** `.github/agents/spring-code-reviewer.agent.md` (reused; no new persona)
 **Skills used:** `shipping-and-launch`, `spring-security-baseline`, `flyway-or-liquibase-detection`
 
 ## Purpose

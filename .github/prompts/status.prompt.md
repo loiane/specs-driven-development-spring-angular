@@ -1,8 +1,6 @@
 ---
-mode: agent
+agent: agent
 description: Run /status — see .github/prompts/status.prompt.md for the authoritative spec.
-
-
 ---
 # /status
 
