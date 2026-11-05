@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /wire-harness — see .github/prompts/wire-harness.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /wire-harness
 
 **Phase:** 0 (meta) — onboarding extension
-**Owning agent:** `.github/chatmodes/spring-onboarding.chatmode.md`
+**Owning agent:** `.github/agents/spring-onboarding.agent.md`
 **Skills used:** `maven-harness-pom`, `jacoco-coverage-policy`, `pit-mutation-tuning`, `flyway-or-liquibase-detection`, `harness-report-parsing`
 
 ## Purpose

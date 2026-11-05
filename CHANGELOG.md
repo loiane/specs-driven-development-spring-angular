@@ -30,6 +30,7 @@ What counts as a breaking change for this toolkit is defined in [CONTRIBUTING.md
 
 ### Changed
 
+- Copilot custom agents moved from the legacy `.github/chatmodes/*.chatmode.md` format to `.github/agents/*.agent.md`, with a `name` field and the current tool aliases (`read`, `edit`, `search`, `execute`, `web`, `todo`). Prompt files use `agent: agent` instead of the deprecated `mode: agent`. The invalid `model: GPT-5` pin was removed, so agents and prompts use the model selected in chat.
 - Canonical spec line format documented in `docs/spec-format.md`: `- AC-NNN: <EARS sentence>` and `- Q-NNN: <question>` with a `Status:` sub-bullet. The `ears-spec-authoring` and `issue-tracker-ingestion` skills and the greenfield example now use it.
 - `traceability.sh` exits `1` when any AC has no linked test and `2` when no ACs are found (previously always `0`).
 - Open questions marked `Status: deferred` or `Status: resolved` no longer block later phases.

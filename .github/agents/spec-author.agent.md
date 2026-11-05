@@ -1,7 +1,7 @@
 ---
+name: spec-author
 description: "Phase 1+2 — author and review the EARS-lite spec for a Spring Boot 4 feature."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `spec-author`
 

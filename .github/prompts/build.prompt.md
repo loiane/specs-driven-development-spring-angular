@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /build — see .github/prompts/build.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /build
 
 **Phase:** 4 — build (TDD)
-**Owning agent:** `.github/chatmodes/spring-implementer.chatmode.md` (collaborates with `spring-test-engineer`)
+**Owning agent:** `.github/agents/spring-implementer.agent.md` (collaborates with `spring-test-engineer`)
 **Skills used:** `tdd-red-green-refactor`, `spring-boot-4-conventions`, `clarity-over-cleverness`, `junit5-testcontainers-patterns`, `spring-task-decomposition`
 
 ## Stack routing

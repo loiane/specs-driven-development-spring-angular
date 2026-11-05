@@ -1,7 +1,7 @@
 ---
+name: angular-validator
 description: "Phase 6 — run Angular frontend validation gates and merge results into validation artifacts."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `angular-validator`
 

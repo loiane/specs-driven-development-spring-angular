@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /review — see .github/prompts/review.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /review
 
 **Phase:** 6 — pre-commit code review
-**Owning agent:** `.github/chatmodes/spring-code-reviewer.chatmode.md`
+**Owning agent:** `.github/agents/spring-code-reviewer.agent.md`
 **Skills used:** `spring-code-review-rubric`, `clarity-over-cleverness`, `spring-boot-4-conventions`, `spring-security-baseline`, `performance-optimization`
 
 ## Stack routing

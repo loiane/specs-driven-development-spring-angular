@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /epic-plan — see .github/prompts/epic-plan.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /epic-plan
 
 **Phase:** 3a — Epic planning
-**Owning agent:** `.github/chatmodes/spring-architect.chatmode.md`
+**Owning agent:** `.github/agents/spring-architect.agent.md`
 **Skills used:** `epic-slicing-planning`, `spring-boot-4-conventions`, `openapi-contract-first`, `adr-authoring`, `performance-optimization`
 
 ## Purpose

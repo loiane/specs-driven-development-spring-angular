@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /spec — see .github/prompts/spec.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /spec
 
 **Phase:** 1 — specify
-**Owning agent:** `.github/chatmodes/spec-author.chatmode.md`
+**Owning agent:** `.github/agents/spec-author.agent.md`
 **Skills used:** `ears-spec-authoring`, `issue-tracker-ingestion`, `requirements-traceability`
 
 ## Purpose

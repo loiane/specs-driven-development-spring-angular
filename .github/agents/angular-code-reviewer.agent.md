@@ -1,7 +1,7 @@
 ---
+name: angular-code-reviewer
 description: "Phase 7 — pre-commit review of changed Angular files; produce findings in 08-code-review.md."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `angular-code-reviewer`
 

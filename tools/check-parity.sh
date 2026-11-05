@@ -3,7 +3,7 @@
 # Verifies that the per-platform copies of shared assets stay in lockstep:
 #   skills/, templates/, checklists/, maven/ under .claude, .github and .windsurf.
 # Also checks that every agent, slash command and guardrail exists on each platform:
-#   agents:     .claude/agents/X.md   .github/chatmodes/X.chatmode.md      .windsurf/workflows/X.md
+#   agents:     .claude/agents/X.md   .github/agents/X.agent.md            .windsurf/workflows/X.md
 #   commands:   .claude/commands/X.md .github/prompts/X.prompt.md          .windsurf/workflows/X.md
 #   guardrails: .github/instructions/X.instructions.md                    .windsurf/rules/X.md
 #
@@ -81,7 +81,7 @@ same_names() {
 
 agents="$(names .claude/agents .md)"
 commands="$(names .claude/commands .md)"
-same_names "agents" ".claude/agents" "$agents" ".github/chatmodes" "$(names .github/chatmodes .chatmode.md)"
+same_names "agents" ".claude/agents" "$agents" ".github/agents" "$(names .github/agents .agent.md)"
 same_names "commands" ".claude/commands" "$commands" ".github/prompts" "$(names .github/prompts .prompt.md)"
 same_names "agents + commands" ".claude/{agents,commands}" "$(printf '%s\n%s\n' "$agents" "$commands" | sort)" \
   ".windsurf/workflows" "$(names .windsurf/workflows .md)"

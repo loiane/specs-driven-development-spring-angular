@@ -1,7 +1,7 @@
 ---
+name: angular-test-engineer
 description: "Phase 4 (red step) — write the failing frontend Angular test for each task before any production code."
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTasks', 'problems', 'changes', 'githubRepo', 'fetch']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'web', 'todo']
 ---
 # Agent: `angular-test-engineer`
 

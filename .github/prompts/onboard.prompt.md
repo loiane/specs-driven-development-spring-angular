@@ -1,13 +1,12 @@
 ---
-mode: agent
+agent: agent
 description: Run /onboard — see .github/prompts/onboard.prompt.md for the authoritative spec.
-tools: ['codebase', 'editFiles', 'search', 'runCommands', 'runTests']
-model: GPT-5
+tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
 # /onboard
 
 **Phase:** 0 — bootstrap
-**Owning agent:** `.github/chatmodes/spring-onboarding.chatmode.md`
+**Owning agent:** `.github/agents/spring-onboarding.agent.md`
 **Skills used:** `brownfield-onboarding`, `maven-harness-pom`, `flyway-or-liquibase-detection`, `harness-report-parsing`, `archunit-rules`
 
 ## Purpose
