@@ -58,6 +58,7 @@
         .reveal table tr:not(:first-child) { background: rgba(9,16,42,0.7); border-bottom: 1px solid var(--border-subtle); }
         .reveal table tr:not(:first-child):nth-child(even) { background: rgba(15,28,62,0.5); }
         .reveal table td { padding: 0.18em 0.4em; color: var(--text-secondary); }
+        .reveal .slides > section.stack { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
         .pyramid { text-align: center; font-family: 'JetBrains Mono', monospace; white-space: pre; }
         .quote { font-style: italic; font-size: 0.9em; }
         .problem-box { background: linear-gradient(135deg, rgba(255,92,122,0.12), rgba(255,120,73,0.06)); border-left: 3px solid var(--accent-orange); border-radius: 0 var(--radius) var(--radius) 0; padding: 0.7em 1em; }
@@ -74,6 +75,22 @@
             <section>
                 <h1 style="font-size: 1.6em; line-height: 1.3em;">Spec Driven Development, Harness/Loop Engineering and Everything in Between</h1>
                 <p style="font-size: 0.7em; margin-top: 3em;">Enterprise AI Co-Authoring: From Prompt Engineering to Specs-Driven Development</p>
+            </section>
+
+            <!-- SLIDE 1b: About Me -->
+            <section>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 1em;">
+                    <div style="flex: 1; text-align: left;">
+                        <h2 style="font-size: 1.6em !important;">Hi, I'm Loiane!</h2>
+                        <div style="margin-top: 1em; padding: 0.8em 1em; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius);">
+                            <p style="font-size: 0.75em !important; color: var(--text-primary);">Director of Engineering @ BNY</p>
+                            <p style="font-size: 0.65em !important;">youtube.com/loianegroner</p>
+                            <p style="font-size: 0.65em !important;">@loiane</p>
+                        </div>
+                    </div>
+                    <img src="images/loiane.jpeg" alt="Loiane Groner" style="width: 230px; height: 230px; object-fit: cover; border-radius: 50%; border: 6px solid var(--accent-purple); box-shadow: var(--shadow-glow); margin: 0;">
+                </div>
+                <img src="images/credentials.png" alt="Google Developer Expert Angular 2025, Microsoft MVP, Oracle ACE, Java Champions" style="display: block; width: 100%; margin: 1.6em auto 0; background: #fff; border-radius: 10px; padding: 8px;">
             </section>
 
             <!-- SLIDE 2: The Problem -->
@@ -245,6 +262,85 @@
                 <p style="margin-top: 2em; font-style: italic;">Same `.github/scripts/harness.sh` runs locally and in CI. No second source of truth.</p>
             </section>
 
+            <!-- SLIDE 10a: Step-by-step walkthrough (screenshots) -->
+            <section>
+                <section>
+                    <h2>Step by Step: The Framework in Action</h2>
+                    <p style="margin-top: 1.5em; font-size: 0.8em;">A real run on a Spring Boot + Angular example repo: from onboarding to an approved code review.</p>
+                    <p style="margin-top: 1em; font-size: 0.6em;">Press &darr; to step through.</p>
+                </section>
+                <section>
+                    <h3>Step 1/14: Start: the example repo</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-01.jpeg" alt="Start: the example repo" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Before onboarding: <code>sdd-api</code> + <code>sdd-ui</code>, no workflow artifacts yet</p>
+                </section>
+                <section>
+                    <h3>Step 2/14: Copy the workflow files</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-02.jpeg" alt="Copy the workflow files" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">The <code>.claude</code> folder adds agents, checklists, commands, skills and templates</p>
+                </section>
+                <section>
+                    <h3>Step 3/14: /onboard</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-03.jpeg" alt="/onboard" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Repo classified as greenfield, stack summarized, gaps identified, artifacts written to <code>.specs/</code></p>
+                </section>
+                <section>
+                    <h3>Step 4/14: /wire-harness</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-04.jpeg" alt="/wire-harness" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Pre-flight check blocks: no migration tool configured, so the agent asks before proceeding</p>
+                </section>
+                <section>
+                    <h3>Step 5/14: /spec</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-05.jpeg" alt="/spec" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Spec written from a GitHub issue; five open questions must be answered before planning</p>
+                </section>
+                <section>
+                    <h3>Step 6/14: /spec-review</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-06.jpeg" alt="/spec-review" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">PASS: 19/19 checklist items, one minor advisory</p>
+                </section>
+                <section>
+                    <h3>Step 7/14: /plan</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-07.jpeg" alt="/plan" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Six TDD-shaped tasks with a full dependency chain, DB layer to frontend wiring</p>
+                </section>
+                <section>
+                    <h3>Step 8/14: /plan: parallel tracks</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-08.jpeg" alt="/plan: parallel tracks" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Backend (T-001–T-003) and frontend (T-004–T-006) run in parallel once the API contract is locked</p>
+                </section>
+                <section>
+                    <h3>Step 9/14: The .specs folder after planning</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-09.jpeg" alt="The .specs folder after planning" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Spec, review, design, tasks, ADRs and implementation log ready for the first build</p>
+                </section>
+                <section>
+                    <h3>Step 10/14: /build T-001 starts</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-10.jpeg" alt="/build T-001 starts" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;"><code>.tdd-state.json</code>: active_task null → T-001, phase pending → red</p>
+                </section>
+                <section>
+                    <h3>Step 11/14: /build T-006 complete</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-11.jpeg" alt="/build T-006 complete" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">All six tasks done, 20/20 tests passing, backend and frontend implemented</p>
+                </section>
+                <section>
+                    <h3>Step 12/14: /validate</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-12.jpeg" alt="/validate" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">18 unit + 6 integration tests pass, 97% line coverage, one formatting issue flagged</p>
+                </section>
+                <section>
+                    <h3>Step 13/14: /review</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-14.jpeg" alt="/review" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">APPROVE: zero must-fix, two should-fix, five praise; all 13 ACs covered</p>
+                </section>
+                <section>
+                    <h3>Step 14/14: The final .specs folder</h3>
+                    <img src="images/walkthrough/specs-driven-spring-angular-15.jpeg" alt="The final .specs folder" style="max-height: 480px; max-width: 100%; margin: 0.3em auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                    <p style="font-size: 0.6em;">Eight lifecycle documents, two ADRs and <code>.tdd-state.json</code> committed with the code</p>
+                </section>
+            </section>
+
             <!-- SLIDE 7: Loop Engineering Intro -->
             <section>
                 <h2>Loop Engineering: A Control System, Not "Run It Again"</h2>
@@ -397,42 +493,6 @@ while harness not all-green:
                 <p style="font-style: italic;">Trusting AI 100% is a disaster waiting to happen — it's still your name on the commit.</p>
             </section>
 
-            <!-- SLIDE 8: Traceability -->
-            <section>
-                <h2 style="font-size: 0.78em; line-height: 1.08em; margin-bottom: 0.12em;">Requirements Traceability: AC ↔ Test ↔ Code ↔ Gate</h2>
-                <h4 style="margin-top: 0.3em; margin-bottom: 0.1em; font-size: 0.52em; text-transform: none;">The Traceability Matrix (Phase 6)</h4>
-                <table style="font-size: 0.42em; line-height: 1.08em; margin-top: 0.25em;">
-                    <tr>
-                        <td><strong>AC-ID</strong></td>
-                        <td><strong>Tasks</strong></td>
-                        <td><strong>Tests (status)</strong></td>
-                        <td><strong>Code symbols</strong></td>
-                        <td><strong>Gates</strong></td>
-                    </tr>
-                    <tr>
-                        <td>AC-001</td>
-                        <td>T-001</td>
-                        <td>DiscountCodeValidationTest::testValidCodeReducesTotal ✓</td>
-                        <td>DiscountCodeValidator::validate</td>
-                        <td>Layer 5, 7 ✓</td>
-                    </tr>
-                    <tr>
-                        <td>AC-002</td>
-                        <td>T-001</td>
-                        <td>DiscountCodeValidationTest::testUnknownCodeRejectsWithD_INVALID ✓</td>
-                        <td>DiscountCodeValidator::validate</td>
-                        <td>Layer 5, 7 ✓</td>
-                    </tr>
-                </table>
-                <h4 style="margin-top: 0.35em; margin-bottom: 0.1em; font-size: 0.52em; text-transform: none;">Why It Matters</h4>
-                <ul style=" line-height: 1.08em; margin-top: 0.05em;">
-                    <li>No orphan tests</li>
-                    <li>No uncovered specs</li>
-                    <li>No mystery code</li>
-                    <li><strong>Complete chain of custody for audits</strong></li>
-                </ul>
-            </section>
-
             <!-- SLIDE 9: Code Review -->
             <section>
                 <h2>Pre-Commit Code Review: Agent + Human</h2>
@@ -468,24 +528,6 @@ while harness not all-green:
                 <p style="font-size: 0.75em;">Produce `08-code-review.md` → APPROVED</p>
                 <h4 style="font-size: 0.9em;">Commit</h4>
                 <p style="font-size: 0.75em;"><em>You</em> run `git commit` (agent never commits automatically)</p>
-            </section>
-
-            <!-- SLIDE 10b: Walkthrough Note -->
-            <section>
-                <h3 style="color: var(--accent-gold);">🎬 Live Demo or Video Walkthrough</h3>
-                <p style="margin-top: 2em; font-size: 0.9em;">Recommend: <strong>6-minute recorded demo</strong> showing</p>
-                <ul style=" margin-top: 1.5em;">
-                    <li>/spec "Add gift-card discount"</li>
-                    <li>User answers Q-001: "Auto-reverse on cancel"</li>
-                    <li>/spec-review → 02-spec-review.md</li>
-                    <li>/plan → 03-design.md + 04-tasks.md</li>
-                    <li>/build T-001 → Red → Green → Refactor</li>
-                    <li>Harness runs, coverage shows 92% → agent adds test → 96%</li>
-                    <li>/validate → all 10 layers ✓</li>
-                    <li>/review → APPROVED</li>
-                    <li>git commit</li>
-                </ul>
-                <p style="margin-top: 1.5em; font-size: 0.8em; font-style: italic;">Bottom line: Feature complete, spec'd, tested, validated, reviewed. No surprises.</p>
             </section>
 
             <!-- SLIDE 11: SDD vs. Prompt Engineering -->
@@ -566,7 +608,7 @@ while harness not all-green:
             <section>
                 <h3 style="color: var(--accent-gold);">Try It Now</h3>
                 <p style="margin-top: 2em; font-size: 0.9em;">This toolkit is <strong>open-source</strong> and ready to drop into any Spring Boot + Angular project.</p>
-                <pre style="margin-top: 1.5em; font-size: 0.8em;">github.com/loiane/specs-driven-development-spring-angular</pre>
+                <pre style="margin-top: 1.5em; font-size: 0.36em; border-left: 1px solid var(--border-subtle) !important;">github.com/loiane/specs-driven-development-spring-angular</pre>
                 <h4 style="margin-top: 2em; color: var(--accent-gold);">Next Steps</h4>
                 <ul style="">
                     <li>Brownfield? Run: <code>/onboard</code></li>
@@ -576,14 +618,15 @@ while harness not all-green:
                 <p style="margin-top: 2em; font-style: italic; font-size: 0.85em;">Prompt engineering gets you a draft. Specs-driven development gets you production code.</p>
             </section>
 
-            <!-- SLIDE 13: Q&A -->
+            <!-- SLIDE 13: Thank You -->
             <section>
-                <h2>Questions?</h2>
-                <p style="margin-top: 3em; font-size: 0.9em;">Open for discussion</p>
-                <p style="margin-top: 2em; font-size: 0.8em;">
-                    <strong>Repo:</strong> github.com/loiane/specs-driven-development-spring-angular<br>
-                    <strong>Docs:</strong> docs/methodology.md, docs/harness-principles.md, docs/spec-format.md
-                </p>
+                <h2 style="font-size: 1.6em !important;">Thank you!</h2>
+                <div style="margin: 1.5em auto 0; max-width: 560px; text-align: left; padding: 0.8em 1.2em; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius);">
+                    <p style="font-size: 0.75em !important;">linkedin.com/in/loiane</p>
+                    <p style="font-size: 0.75em !important;">loiane.com</p>
+                    <p style="font-size: 0.75em !important;">youtube.com/loianegroner</p>
+                </div>
+                <p style="margin-top: 1.5em; font-size: 0.65em !important;"><strong>Repo:</strong> github.com/loiane/specs-driven-development-spring-angular</p>
             </section>
 
         </div>
