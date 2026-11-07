@@ -341,6 +341,25 @@
                 </section>
             </section>
 
+            <!-- SLIDE 10: End-to-End Walkthrough -->
+            <section>
+                <h2>End-to-End: Spec → Ship in Minutes/Hours</h2>
+                <h4 style="margin-top: 1em; font-size: 0.9em;">Phase 1: Spec</h4>
+                <p style="font-size: 0.75em;">Draft `01-spec.md` → User answers Q-NNN → Phase complete</p>
+                <h4 style="font-size: 0.9em;">Phase 2: Spec Review</h4>
+                <p style="font-size: 0.75em;">Run checklist: testable? atomic? no implementation leakage? → Produce `02-spec-review.md`</p>
+                <h4 style="font-size: 0.9em;">Phase 3: Plan</h4>
+                <p style="font-size: 0.75em;">Produce `03-design.md` (architecture, API shapes, DB schema) + `04-tasks.md` (T-001, T-002, ...)</p>
+                <h4 style="font-size: 0.9em;">Phase 4: Implement</h4>
+                <p style="font-size: 0.75em;">For each task: red test → green code → refactor → simplify → coverage ≥95%</p>
+                <h4 style="font-size: 0.9em;">Phase 6: Validate</h4>
+                <p style="font-size: 0.75em;">Run harness → all 10 layers ✓ → produce `07-validation-report.md` + `07a-traceability.md`</p>
+                <h4 style="font-size: 0.9em;">Phase 7: Review</h4>
+                <p style="font-size: 0.75em;">Produce `08-code-review.md` → APPROVED</p>
+                <h4 style="font-size: 0.9em;">Commit</h4>
+                <p style="font-size: 0.75em;"><em>You</em> run `git commit` (agent never commits automatically)</p>
+            </section>
+
             <!-- SLIDE 7: Loop Engineering Intro -->
             <section>
                 <h2>Loop Engineering: A Control System, Not "Run It Again"</h2>
@@ -509,25 +528,6 @@ while harness not all-green:
                 <h4 style="margin-top: 1.5em;">Severity Classification</h4>
                 <p style="font-size: 0.85em;"><strong>Blocker</strong> | <strong>Major</strong> | <strong>Minor</strong> | <strong>Nit</strong></p>
                 <p style="font-size: 0.8em; margin-top: 1em;"><strong>Verdict:</strong> Zero blockers/majors → APPROVED. <em>Human still approves the PR.</em></p>
-            </section>
-
-            <!-- SLIDE 10: End-to-End Walkthrough -->
-            <section>
-                <h2>End-to-End: Spec → Ship in 6 Minutes</h2>
-                <h4 style="margin-top: 1em; font-size: 0.9em;">Phase 1: Spec</h4>
-                <p style="font-size: 0.75em;">Draft `01-spec.md` → User answers Q-NNN → Phase complete</p>
-                <h4 style="font-size: 0.9em;">Phase 2: Spec Review</h4>
-                <p style="font-size: 0.75em;">Run checklist: testable? atomic? no implementation leakage? → Produce `02-spec-review.md`</p>
-                <h4 style="font-size: 0.9em;">Phase 3: Plan</h4>
-                <p style="font-size: 0.75em;">Produce `03-design.md` (architecture, API shapes, DB schema) + `04-tasks.md` (T-001, T-002, ...)</p>
-                <h4 style="font-size: 0.9em;">Phase 4: Implement</h4>
-                <p style="font-size: 0.75em;">For each task: red test → green code → refactor → simplify → coverage ≥95%</p>
-                <h4 style="font-size: 0.9em;">Phase 6: Validate</h4>
-                <p style="font-size: 0.75em;">Run harness → all 10 layers ✓ → produce `07-validation-report.md` + `07a-traceability.md`</p>
-                <h4 style="font-size: 0.9em;">Phase 7: Review</h4>
-                <p style="font-size: 0.75em;">Produce `08-code-review.md` → APPROVED</p>
-                <h4 style="font-size: 0.9em;">Commit</h4>
-                <p style="font-size: 0.75em;"><em>You</em> run `git commit` (agent never commits automatically)</p>
             </section>
 
             <!-- SLIDE 11: SDD vs. Prompt Engineering -->
